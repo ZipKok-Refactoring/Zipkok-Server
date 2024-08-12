@@ -1,6 +1,12 @@
 package com.project.zipkok.model;
 
 import com.project.zipkok.common.enums.*;
+import com.project.zipkok.common.enums.Gender;
+import com.project.zipkok.common.enums.OAuthProvider;
+import com.project.zipkok.common.enums.RealEstateType;
+import com.project.zipkok.common.enums.TransactionType;
+import com.project.zipkok.dto.PatchOnBoardingRequest;
+import com.project.zipkok.dto.PutUpdateMyInfoRequest;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -94,5 +100,26 @@ public class User {
         this.birthday = birthday;
         this.role = Role.USER;
         this.status =  "active";
+    }
+
+    public void setOnBoardingInfo(PatchOnBoardingRequest patchOnBoardingRequest) {
+        this.realEstateType = patchOnBoardingRequest.getRealEstateType();
+        this.transactionType = patchOnBoardingRequest.getTransactionType();
+
+        this.desireResidence.setDesireResidenceInfo(patchOnBoardingRequest);
+        this.transactionPriceConfig.setTransactionPriceConfig(patchOnBoardingRequest);
+    }
+
+    public void setUpdateUserInfo(String url, PutUpdateMyInfoRequest putUpdateMyInfoRequest){
+        this.nickname = putUpdateMyInfoRequest.getNickname();
+        this.birthday = putUpdateMyInfoRequest.getBirthday();
+        this.gender = putUpdateMyInfoRequest.getGender();
+        this.realEstateType = putUpdateMyInfoRequest.getRealEstateType();
+        this.transactionType = putUpdateMyInfoRequest.getTransactionType();
+
+        this.profileImgUrl = url;
+
+        this.desireResidence.setDesireResidenceInfo(putUpdateMyInfoRequest);
+        this.transactionPriceConfig.setTransactionPriceConfig(putUpdateMyInfoRequest);
     }
 }
