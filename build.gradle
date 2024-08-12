@@ -31,6 +31,12 @@ dependencies {
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-starter-test:3.1.2'
 
+	//spring security
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+
+	//테스트코드 spring security
+	testImplementation 'org.springframework.security:spring-security-test'
+
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.projectlombok:lombok:1.18.28'
