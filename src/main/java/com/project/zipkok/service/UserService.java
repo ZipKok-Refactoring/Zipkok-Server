@@ -17,6 +17,7 @@ import com.project.zipkok.repository.*;
 import com.project.zipkok.util.FileUploadUtils;
 import com.project.zipkok.util.jwt.AuthTokens;
 import com.project.zipkok.util.jwt.JwtProvider;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -99,10 +100,8 @@ public class UserService {
         List<Impression> impressionList = impressions.stream().toList();
         impressionBulkJdbcRepository.saveAll(impressionList);
 
-        long userId = this.userRepository.findByEmail(user.getEmail()).getUserId();
-
         //token 발행
-        AuthTokens authTokens = jwtProvider.createToken(user.getEmail(), userId);
+        AuthTokens authTokens = jwtProvider.createToken(JwtUserDetails.from(user));
 
         redisService.setValues(user.getEmail(), authTokens.getRefreshToken(), Duration.ofMillis(jwtProvider.getREFRESH_TOKEN_EXPIRED_IN()));
 

@@ -1,5 +1,6 @@
 package com.project.zipkok.util.jwt;
 
+import com.project.zipkok.common.enums.Role;
 import io.jsonwebtoken.*;
 import com.project.zipkok.common.exception.jwt.bad_request.JwtUnsupportedTokenException;
 import com.project.zipkok.common.exception.jwt.unauthorized.JwtInvalidTokenException;
@@ -27,10 +28,15 @@ public class JwtProvider {
     @Getter
     private long REFRESH_TOKEN_EXPIRED_IN;
 
-    public AuthTokens createToken(String email, Long userId) {
+    public AuthTokens createToken(JwtUserDetails jwtUserDetails) {
         log.info("JWT key={}", JWT_SECRET_KEY);
 
-        Claims claims = Jwts.claims().setSubject(email);
+        Claims claims = Jwts.claims()
+                .setSubject(jwtUserDetails.getUserId().toString())
+                .setIssuer("zipkok");
+
+        claims.put("role", jwtUserDetails.getRole().toString());
+
         Date now = new Date();
         Date accessTokenExpiredAt = new Date(now.getTime() + JWT_EXPIRED_IN);
         Date refreshTokenExpiredAt = new Date(now.getTime() + REFRESH_TOKEN_EXPIRED_IN);
@@ -39,7 +45,6 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(accessTokenExpiredAt)
-                .claim("userId", userId)
                 .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
                 .compact();
 
@@ -47,7 +52,6 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(refreshTokenExpiredAt)
-                .claim("userId", userId)
                 .signWith(SignatureAlgorithm.HS256, JWT_SECRET_KEY)
                 .compact();
 
@@ -55,20 +59,25 @@ public class JwtProvider {
     }
 
     public boolean isExpiredToken(String token) throws JwtInvalidTokenException {
+        log.info("[JwtTokenProvider.isExpiredToken] token={}", token);
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(JWT_SECRET_KEY).build()
                     .parseClaimsJws(token);
+
             return claims.getBody().getExpiration().before(new Date());
 
         } catch (ExpiredJwtException e) {
-            return true;
-
+            log.error("[ExpiredJwtException]");
+            throw new JwtInvalidTokenException(EXPIRED_TOKEN);
         } catch (UnsupportedJwtException e) {
+            log.error("[UnsupportedJwtException]");
             throw new JwtUnsupportedTokenException(UNSUPPORTED_TOKEN_TYPE);
         } catch (MalformedJwtException e) {
+            log.error("[MalformedJwtException]");
             throw new JwtMalformedTokenException(MALFORMED_TOKEN);
         } catch (IllegalArgumentException e) {
+            log.error("[IllegalArgumentException]");
             throw new JwtInvalidTokenException(INVALID_TOKEN);
         } catch (JwtException e) {
             log.error("[JwtTokenProvider.validateAccessToken]", e);
@@ -90,6 +99,26 @@ public class JwtProvider {
                 .parseClaimsJws(token)
                 .getBody()
                 .get("userId", Long.class);
+    }
+
+    private Claims getBody(String token) {
+        if (token.contains("Bearer ")) {
+            token = token.substring("Bearer ".length());
+        }
+
+        return Jwts.parserBuilder()
+                .setSigningKey(JWT_SECRET_KEY)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public JwtUserDetails getJwtUserDetails(String token) {
+        Claims claims = getBody(token);
+        return JwtUserDetails.builder()
+                .userId(Long.valueOf(claims.getSubject()))
+                .role(Role.valueOf(claims.get("role").toString()))
+                .build();
     }
 
 }

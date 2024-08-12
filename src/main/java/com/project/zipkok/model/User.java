@@ -1,9 +1,6 @@
 package com.project.zipkok.model;
 
-import com.project.zipkok.common.enums.Gender;
-import com.project.zipkok.common.enums.OAuthProvider;
-import com.project.zipkok.common.enums.RealEstateType;
-import com.project.zipkok.common.enums.TransactionType;
+import com.project.zipkok.common.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -54,6 +51,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
+    @Column(name = "role", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @Column(name = "status", nullable = false)
     private String status = "active";
 
@@ -91,6 +92,7 @@ public class User {
         this.nickname = nickname;
         this.gender = gender;
         this.birthday = birthday;
+        this.role = Role.USER;
         this.status =  "active";
     }
 }

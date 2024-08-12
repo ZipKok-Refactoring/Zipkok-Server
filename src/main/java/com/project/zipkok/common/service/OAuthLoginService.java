@@ -11,6 +11,7 @@ import com.project.zipkok.repository.UserRepository;
 import com.project.zipkok.util.FileUploadUtils;
 import com.project.zipkok.util.jwt.AuthTokens;
 import com.project.zipkok.util.jwt.JwtProvider;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +64,7 @@ public class OAuthLoginService {
                 this.userRepository.save(user);
             }
 
-            AuthTokens authTokens = jwtProvider.createToken(user.getEmail(), user.getUserId());
+            AuthTokens authTokens = jwtProvider.createToken(JwtUserDetails.from(user));
 
             redisService.setValues(user.getEmail(), authTokens.getRefreshToken(), Duration.ofMillis(jwtProvider.getREFRESH_TOKEN_EXPIRED_IN()));
 
