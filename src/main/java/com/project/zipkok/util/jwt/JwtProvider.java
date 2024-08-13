@@ -93,12 +93,12 @@ public class JwtProvider {
                 .getSubject();
     }
 
-    public long getId(String token) {
-        return Jwts.parserBuilder()
+    public Long getId(String token) {
+        return Long.valueOf(Jwts.parserBuilder()
                 .setSigningKey(JWT_SECRET_KEY).build()
                 .parseClaimsJws(token)
                 .getBody()
-                .get("userId", Long.class);
+                .getSubject());
     }
 
     private Claims getBody(String token) {
