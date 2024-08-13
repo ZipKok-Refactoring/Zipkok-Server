@@ -1,6 +1,7 @@
 package com.project.zipkok.service;
 
 import com.project.zipkok.common.enums.RealEstateType;
+import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.common.enums.TransactionType;
 import com.project.zipkok.common.exception.RealEstateException;
 import com.project.zipkok.dto.*;
@@ -134,7 +135,7 @@ public class RealEstateService {
         TransactionType userTransactionType;
         RealEstateType userRealEstateType;
 
-        if(jwtUserDetail.getUserId() == -1) {
+        if(jwtUserDetail.getRole().equals(Role.GUEST)) {
             userTransactionType = getRealEstateOnMapRequest.getTransactionType();
             userRealEstateType = getRealEstateOnMapRequest.getRealEstateType();
 
