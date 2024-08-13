@@ -1,6 +1,7 @@
 package com.project.zipkok.service;
 
 import com.project.zipkok.common.exception.s3.FileUploadException;
+import com.project.zipkok.common.exception.user.NoMatchUserException;
 import com.project.zipkok.common.exception.user.UserBadRequestException;
 import com.project.zipkok.common.service.RedisService;
 import com.project.zipkok.dto.*;
@@ -216,7 +217,8 @@ public class UserService {
         log.info("{UserService.signout}");
 
         try {
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserIdWithZimAndKok(userId)
+                    .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
 
             //redis에 user Refresh token 삭제
             this.redisService.deleteValues(user.getEmail());
@@ -237,7 +239,8 @@ public class UserService {
         log.info("[UserService.deregister]");
 
         try {
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserIdWithZimAndKok(userId)
+                    .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
 
             this.redisService.deleteValues(user.getEmail());
 

@@ -4,6 +4,7 @@ import com.project.zipkok.common.enums.RealEstateType;
 import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.common.enums.TransactionType;
 import com.project.zipkok.common.exception.RealEstateException;
+import com.project.zipkok.common.exception.user.NoMatchUserException;
 import com.project.zipkok.dto.*;
 import com.project.zipkok.model.*;
 import com.project.zipkok.repository.RealEstateRepository;
@@ -123,8 +124,8 @@ public class RealEstateService {
     }
 
     public GetMapRealEstateResponse getRealEstate(JwtUserDetails jwtUserDetail, GetRealEstateOnMapRequest getRealEstateOnMapRequest) {
-        log.info("{UserService.getRealEstate}");
 
+        log.info("{UserService.getRealEstate} userId: {}, role: {}", jwtUserDetail.getUserId(), jwtUserDetail.getRole());
 
         List<RealEstate> realEstateList = this.realEstateRepository.findByLatitudeBetweenAndLongitudeBetween(getRealEstateOnMapRequest.getSouthWestLat(),getRealEstateOnMapRequest.getNorthEastLat(),getRealEstateOnMapRequest.getSouthWestLon(),getRealEstateOnMapRequest.getNorthEastLon());
 
@@ -185,7 +186,8 @@ public class RealEstateService {
 
         } else {
 
-            User user = this.userRepository.findByUserId(jwtUserDetail.getUserId());
+            User user = this.userRepository.findByUserIdWithZimAndKok(jwtUserDetail.getUserId())
+                    .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
 
             GetLoginMapRealEstateResponse getLoginMapRealEstateResponse = new GetLoginMapRealEstateResponse();
 

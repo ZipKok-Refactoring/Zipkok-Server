@@ -2,6 +2,7 @@ package com.project.zipkok.service;
 
 import com.project.zipkok.common.enums.OptionCategory;
 import com.project.zipkok.common.exception.KokException;
+import com.project.zipkok.common.exception.user.NoMatchUserException;
 import com.project.zipkok.dto.*;
 import com.project.zipkok.model.*;
 import com.project.zipkok.repository.*;
@@ -282,7 +283,8 @@ public class KokService {
     private Kok settingKok(long userId, List<MultipartFile> multipartFiles, PostOrPutKokRequest postOrPutKokRequest){
         log.info("KokService.settingKok");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserIdWithZimAndKok(userId)
+                .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
         Kok kok = getInitializeKok(user, postOrPutKokRequest);
 
         if(kok == null){
