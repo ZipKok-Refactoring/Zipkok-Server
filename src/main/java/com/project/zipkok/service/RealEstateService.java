@@ -8,6 +8,7 @@ import com.project.zipkok.model.*;
 import com.project.zipkok.repository.RealEstateRepository;
 import com.project.zipkok.repository.UserRepository;
 import com.project.zipkok.util.GeoLocationUtils;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +30,13 @@ public class RealEstateService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GetRealEstateResponse getRealEstateInfo(Long userId, Long realEstateId) {
+    public GetRealEstateResponse getRealEstateInfo(JwtUserDetails jwtUserDetail, Long realEstateId) {
 
         log.info("[RealEstateService.getRealEstateInfo]");
 
 //        try {
             RealEstate realEstate = realEstateRepository.findById(realEstateId.longValue());
-            User user = userRepository.findByUserId(userId);
+            User user = userRepository.findByUserId(jwtUserDetail.getUserId());
 
 
             List<String> realEstateImages = new ArrayList<>();
@@ -87,10 +88,10 @@ public class RealEstateService {
 //        }
     }
 
-    public PostRealEstateResponse registerRealEstate(long userId, PostRealEstateRequest postRealEstateRequest) {
+    public PostRealEstateResponse registerRealEstate(JwtUserDetails jwtUserDetail, PostRealEstateRequest postRealEstateRequest) {
 
 //        try {
-            User user = userRepository.findByUserId(userId);
+            User user = userRepository.findByUserId(jwtUserDetail.getUserId());
 
             RealEstate realEstate = RealEstate.builder()
                     .imageUrl(null)
@@ -106,7 +107,7 @@ public class RealEstateService {
                     .pyeongsu(postRealEstateRequest.getPyeongsu())
                     .realEstateType(postRealEstateRequest.getRealEstateType())
                     .floorNum(postRealEstateRequest.getFloorNum())
-                    .userId(userId)
+                    .userId(jwtUserDetail.getUserId())
                     .agent(null)
                     .detailAddress(postRealEstateRequest.getDetailAddress())
                     .status("active")
@@ -120,7 +121,7 @@ public class RealEstateService {
 //        }
     }
 
-    public GetMapRealEstateResponse getRealEstate(long userId, GetRealEstateOnMapRequest getRealEstateOnMapRequest) {
+    public GetMapRealEstateResponse getRealEstate(JwtUserDetails jwtUserDetail, GetRealEstateOnMapRequest getRealEstateOnMapRequest) {
         log.info("{UserService.getRealEstate}");
 
 
@@ -133,7 +134,7 @@ public class RealEstateService {
         TransactionType userTransactionType;
         RealEstateType userRealEstateType;
 
-        if(userId == -1) {
+        if(jwtUserDetail.getUserId() == -1) {
             userTransactionType = getRealEstateOnMapRequest.getTransactionType();
             userRealEstateType = getRealEstateOnMapRequest.getRealEstateType();
 
@@ -183,7 +184,7 @@ public class RealEstateService {
 
         } else {
 
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserId(jwtUserDetail.getUserId());
 
             GetLoginMapRealEstateResponse getLoginMapRealEstateResponse = new GetLoginMapRealEstateResponse();
 
@@ -225,7 +226,7 @@ public class RealEstateService {
             //realEstateInfo mapping
             List<GetLoginMapRealEstateResponse.RealEstateInfo> realEstateInfoList = realEstateList
                     .stream()
-                    .filter(result -> result.getUserId() == null || result.getUserId().equals(userId))
+                    .filter(result -> result.getUserId() == null || result.getUserId().equals(jwtUserDetail.getUserId()))
                     .map(result -> GetLoginMapRealEstateResponse.RealEstateInfo.builder()
                             .realEstateId(result.getRealEstateId())
                             .imageURL(result.getImageUrl())

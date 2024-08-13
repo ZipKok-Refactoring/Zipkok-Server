@@ -1,16 +1,17 @@
 package com.project.zipkok.controller;
 
-import com.project.zipkok.common.argument_resolver.PreAuthorize;
 import com.project.zipkok.common.exception.RealEstateException;
 import com.project.zipkok.common.response.BaseResponse;
 import com.project.zipkok.dto.*;
 import com.project.zipkok.service.RealEstateService;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -28,7 +29,7 @@ public class RealEstateController {
 
     @Operation(summary = "매물 상세정보 API", description = "매물의 상세정보를 응답하는 API입니다.")
     @GetMapping("/{realEstateId}")
-    public BaseResponse<GetRealEstateResponse> getRealEstate(@Parameter(hidden = true) @PreAuthorize long userId, @Parameter(name = "realEstateId", description = "매물의 Id", in = ParameterIn.PATH)
+    public BaseResponse<GetRealEstateResponse> getRealEstate(@Parameter(hidden = true) @AuthenticationPrincipal JwtUserDetails jwtUserDetail, @Parameter(name = "realEstateId", description = "매물의 Id", in = ParameterIn.PATH)
                                                                  @PathVariable(value = "realEstateId") Long realEstateId) {
         log.info("[RealEstateController.getRealEstate]");
 
@@ -36,12 +37,12 @@ public class RealEstateController {
             throw new RealEstateException(INVALID_PROPERTY_ID);
         }
 
-        return new BaseResponse<>(PROPERTY_DETAIL_QUERY_SUCCESS, realEstateService.getRealEstateInfo(userId, realEstateId));
+        return new BaseResponse<>(PROPERTY_DETAIL_QUERY_SUCCESS, realEstateService.getRealEstateInfo(jwtUserDetail, realEstateId));
     }
 
     @Operation(summary = "매물 직접등록 API", description = "매물을 직접 등록할 때 사용하는 API입니다.")
     @PostMapping("")
-    public BaseResponse<PostRealEstateResponse> registerRealEstate(@Parameter(hidden = true) @PreAuthorize long userId,
+    public BaseResponse<PostRealEstateResponse> registerRealEstate(@Parameter(hidden = true) @AuthenticationPrincipal JwtUserDetails jwtUserDetail,
                                                                    @Validated @RequestBody PostRealEstateRequest postRealEstateRequest, BindingResult bindingResult) {
 
         log.info("[RealEstateController.registerReslEstate]");
@@ -60,12 +61,12 @@ public class RealEstateController {
             throw new RealEstateException(INVALID_LONGITUDE_FORMAT);
         }
 
-        return new BaseResponse<>(PROPERTY_REGISTRATION_SUCCESS, realEstateService.registerRealEstate(userId, postRealEstateRequest));
+        return new BaseResponse<>(PROPERTY_REGISTRATION_SUCCESS, realEstateService.registerRealEstate(jwtUserDetail, postRealEstateRequest));
     }
 
     @Operation(summary = "홈 화면 지도 API", description = "지도 상에 띄울 매물을 받기 위한 api입니다.")
     @GetMapping("")
-    public BaseResponse<GetMapRealEstateResponse> realEstateOnMap(@Parameter(hidden=true) @PreAuthorize long userId,
+    public BaseResponse<GetMapRealEstateResponse> realEstateOnMap(@Parameter(hidden=true) @AuthenticationPrincipal JwtUserDetails jwtUserDetail,
                                                                        @Validated @ModelAttribute GetRealEstateOnMapRequest getRealEstateOnMapRequest,
                                                                        BindingResult bindingResult){
         log.info("{UserController.realEstateOnMap}");
@@ -83,6 +84,6 @@ public class RealEstateController {
         }
 
 
-        return new BaseResponse<>(PROPERTY_MAP_QUERY_SUCCESS, this.realEstateService.getRealEstate(userId, getRealEstateOnMapRequest));
+        return new BaseResponse<>(PROPERTY_MAP_QUERY_SUCCESS, this.realEstateService.getRealEstate(jwtUserDetail, getRealEstateOnMapRequest));
     }
 }

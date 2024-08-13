@@ -6,6 +6,7 @@ import com.project.zipkok.dto.*;
 import com.project.zipkok.model.*;
 import com.project.zipkok.repository.*;
 import com.project.zipkok.util.FileUploadUtils;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,20 +39,20 @@ public class KokService {
     private final StarRepository starRepository;
 
     @Transactional
-    public GetKokResponse getKoks(long userId, Pageable pageable) {
+    public GetKokResponse getKoks(JwtUserDetails jwtUserDetail, Pageable pageable) {
 
         log.info("[KokService.getKoks]");
 
-        List<GetKokWithZimStatus> getKokWithZimStatus = kokRepository.getKokWithZimStatus(userId, pageable);
+        List<GetKokWithZimStatus> getKokWithZimStatus = kokRepository.getKokWithZimStatus(jwtUserDetail.getUserId(), pageable);
 
         return GetKokResponse.from(getKokWithZimStatus);
     }
 
-    public GetKokDetailResponse getKokDetail(long userId, long kokId) {
+    public GetKokDetailResponse getKokDetail(JwtUserDetails jwtUserDetail, long kokId) {
 
         log.info("[KokService.getKokDetail]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetail.getUserId());
         Kok kok = kokRepository.findById(kokId).orElseThrow(() -> new KokException(KOK_ID_NOT_FOUND));
 
         boolean isZimmed = judgeIsZimmedRealEstate(user, kok.getRealEstate());
@@ -67,11 +68,11 @@ public class KokService {
         return user.getZims().stream().anyMatch(zim -> zim.getRealEstate().getRealEstateId() == realEstate.getRealEstateId());
     }
 
-    public GetKokOuterInfoResponse getKokOuterInfo(long userId, long kokId) {
+    public GetKokOuterInfoResponse getKokOuterInfo(JwtUserDetails jwtUserDetail, long kokId) {
 
         log.info("[KokService.getKokOuterInfo]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetail.getUserId());
         Kok kok = kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(kokId);
 
         validateUserAndKok(user, kok);
@@ -79,11 +80,11 @@ public class KokService {
         return GetKokOuterInfoResponse.of(kok);
     }
 
-    public GetKokInnerInfoResponse getKokInnerInfo(long userId, long kokId) {
+    public GetKokInnerInfoResponse getKokInnerInfo(JwtUserDetails jwtUserDetail, long kokId) {
 
         log.info("[KokService.getKokInnerInfo]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetail.getUserId());
         Kok kok = kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(kokId);
 
         validateUserAndKok(user, kok);
@@ -91,11 +92,11 @@ public class KokService {
         return GetKokInnerInfoResponse.of(kok);
     }
 
-    public GetKokContractResponse getKokContractInfo(long userId, long kokId) {
+    public GetKokContractResponse getKokContractInfo(JwtUserDetails jwtUserDetail, long kokId) {
 
         log.info("[KokService.getKokContractInfo]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetail.getUserId());
         Kok kok = kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(kokId);
 
         validateUserAndKok(user, kok);
@@ -103,11 +104,11 @@ public class KokService {
         return GetKokContractResponse.of(kok);
     }
 
-    public GetKokReviewInfoResponse getKokReviewInfo(long userId, long kokId) {
+    public GetKokReviewInfoResponse getKokReviewInfo(JwtUserDetails jwtUserDetail, long kokId) {
 
         log.info("[KokService.getKokReviewInfo]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetail.getUserId());
         Kok kok = kokRepository.findKokWithImpressionAndStar(kokId);
 
         validateUserAndKok(user, kok);
@@ -115,11 +116,11 @@ public class KokService {
         return GetKokReviewInfoResponse.of(kok);
     }
 
-    public GetKokConfigInfoResponse getKokConfigInfo(long userId, Long kokId) {
+    public GetKokConfigInfoResponse getKokConfigInfo(JwtUserDetails jwtUserDetail, Long kokId) {
 
         log.info("[KokService.getKokConfigInfo]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetail.getUserId());
 
         if(kokId != null) {
             Kok kok = kokRepository.findByKokId(kokId);
@@ -266,10 +267,10 @@ public class KokService {
     }
 
     @Transactional
-    public PostOrPutKokResponse createOrUpdateKok(long userId, List<MultipartFile> multipartFiles, PostOrPutKokRequest postOrPutKokRequest) {
+    public PostOrPutKokResponse createOrUpdateKok(JwtUserDetails jwtUserDetail, List<MultipartFile> multipartFiles, PostOrPutKokRequest postOrPutKokRequest) {
         log.info("KokService.postOrPutKok");
 
-        Kok kok = settingKok(userId, multipartFiles, postOrPutKokRequest);
+        Kok kok = settingKok(jwtUserDetail.getUserId(), multipartFiles, postOrPutKokRequest);
 
         kokRepository.save(kok);
 

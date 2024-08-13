@@ -6,6 +6,7 @@ import com.project.zipkok.model.Pin;
 import com.project.zipkok.model.User;
 import com.project.zipkok.repository.PinRepository;
 import com.project.zipkok.repository.UserRepository;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +25,11 @@ public class PinService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GetPinResponse getPin(long userId) {
+    public GetPinResponse getPin(JwtUserDetails jwtUserDetails) {
 
         log.info("[PinService.getPin]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetails.getUserId());
 
         GetPinResponse response = GetPinResponse.builder()
                 .pinList(user.getPins()
@@ -49,11 +50,11 @@ public class PinService {
     }
 
     @Transactional
-    public PinInfo getPinDetail(long userId, Long pinId) {
+    public PinInfo getPinDetail(JwtUserDetails jwtUserDetails, Long pinId) {
 
         log.info("[PinService.getPinDetail]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetails.getUserId());
         Pin pin = pinRepository.findByPinId(pinId);
 
         if(pin == null) {
@@ -76,10 +77,10 @@ public class PinService {
     }
 
     @Transactional
-    public PostPinResponse registerPin(long userId, PostPinRequest postPinRequest) {
+    public PostPinResponse registerPin(JwtUserDetails jwtUserDetails, PostPinRequest postPinRequest) {
         log.info("[PinService.registerPin]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetails.getUserId());
 
         Pin pin = Pin.builder()
                 .user(user)
@@ -97,10 +98,10 @@ public class PinService {
     }
 
     @Transactional
-    public Object updatePin(long userId, PinInfo putPinRequest) {
+    public Object updatePin(JwtUserDetails jwtUserDetails, PinInfo putPinRequest) {
         log.info("[PinService.updatePin]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetails.getUserId());
 
         Pin pin = pinRepository.findByPinId(putPinRequest.getId());
 
@@ -120,11 +121,11 @@ public class PinService {
         return null;
     }
 
-    public Object deletePin(long userId, DeletePinRequest deletePinRequest) {
+    public Object deletePin(JwtUserDetails jwtUserDetails, DeletePinRequest deletePinRequest) {
 
         log.info("[PinService.deletePin]");
 
-        User user = userRepository.findByUserId(userId);
+        User user = userRepository.findByUserId(jwtUserDetails.getUserId());
 
         Pin pin = pinRepository.findByPinId(deletePinRequest.getId());
 

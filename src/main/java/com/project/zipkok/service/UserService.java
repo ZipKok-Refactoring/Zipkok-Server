@@ -105,48 +105,48 @@ public class UserService {
     }
 
     @Transactional
-    public Objects setOnBoarding(PatchOnBoardingRequest patchOnBoardingRequest, long userId) {
+    public Objects setOnBoarding(PatchOnBoardingRequest patchOnBoardingRequest, JwtUserDetails jwtUserDetails) {
         log.info("{UserService.setOnBoarding}");
 
-        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(userId);
+        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
         user.setOnBoardingInfo(patchOnBoardingRequest);
 
         userRepository.save(user);
         return null;
     }
 
-    public GetMyPageResponse myPageLoad(long userId) {
+    public GetMyPageResponse myPageLoad(JwtUserDetails jwtUserDetails) {
         log.info("{UserService.myPageLoad}");
 
-        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(userId);
+        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
 
         return GetMyPageResponse.from(user);
     }
 
-    public GetMyPageDetailResponse myPageDetailLoad(long userId) {
+    public GetMyPageDetailResponse myPageDetailLoad(JwtUserDetails jwtUserDetails) {
         log.info("{UserService.myPageDetailLoad}");
 
-        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(userId);
+        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
 
         return GetMyPageDetailResponse.from(user);
     }
 
     @Transactional
-    public GetKokOptionLoadResponse loadKokOption(long userId) {
+    public GetKokOptionLoadResponse loadKokOption(JwtUserDetails jwtUserDetails) {
         log.info("{UserService.loadKokOption}");
 
-        List<Highlight> highlightList = highlightRepository.findAllByUserId(userId);
-        List<Option> optionList = optionRepository.findAllByUserIdWithDetailOption(userId);
+        List<Highlight> highlightList = highlightRepository.findAllByUserId(jwtUserDetails.getUserId());
+        List<Option> optionList = optionRepository.findAllByUserIdWithDetailOption(jwtUserDetails.getUserId());
 
         return GetKokOptionLoadResponse.of(highlightList, optionList);
     }
 
     @Transactional
-    public Object updateKokOption(long userId, PostUpdateKokOptionRequest postUpdateKokOptionRequest) {
+    public Object updateKokOption(JwtUserDetails jwtUserDetails, PostUpdateKokOptionRequest postUpdateKokOptionRequest) {
         log.info("{UserService.updateKokOption}");
 
-        updateHighlightList(userId, postUpdateKokOptionRequest);
-        updateOption(userId, postUpdateKokOptionRequest);
+        updateHighlightList(jwtUserDetails.getUserId(), postUpdateKokOptionRequest);
+        updateOption(jwtUserDetails.getUserId(), postUpdateKokOptionRequest);
 
         return null;
     }
@@ -190,11 +190,11 @@ public class UserService {
     }
 
     @Transactional
-    public Object logout(long userId) {
+    public Object logout(JwtUserDetails jwtUserDetails) {
         log.info("{UserService.logout}");
 
         try{
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserId(jwtUserDetails.getUserId());
 
             //user table status를 disable로 설정
             user.setStatus("disable");
@@ -286,12 +286,12 @@ public class UserService {
     }
 
     @Transactional
-    public Object deregisterV2(long userId) {
+    public Object deregisterV2(JwtUserDetails jwtUserDetails) {
 
         log.info("[UserService.deregisterV2");
 
         try {
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserId(jwtUserDetails.getUserId());
 
             this.redisService.deleteValues(user.getEmail());
 
@@ -322,12 +322,12 @@ public class UserService {
     }
 
     @Transactional
-    public Object updateMyInfo(long userId, MultipartFile file, PutUpdateMyInfoRequest putUpdateMyInfoRequest) {
+    public Object updateMyInfo(JwtUserDetails jwtUserDetails, MultipartFile file, PutUpdateMyInfoRequest putUpdateMyInfoRequest) {
         log.info("{UserService.updateMyInfo}");
 
-        User user = this.userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(userId);
+        User user = this.userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
 
-        String imageUrl = settingProfileImage(userId, file);
+        String imageUrl = settingProfileImage(jwtUserDetails.getUserId(), file);
 
         user.setUpdateUserInfo(imageUrl, putUpdateMyInfoRequest);
 
@@ -349,10 +349,10 @@ public class UserService {
     }
 
     @Transactional
-    public Object updateFilter(long userId, PatchUpdateFilterRequest patchUpdateFilterRequest) {
+    public Object updateFilter(JwtUserDetails jwtUserDetails, PatchUpdateFilterRequest patchUpdateFilterRequest) {
         log.info("{UserService.updateFilter}");
 
-        User user = this.userRepository.findByUserId(userId);
+        User user = this.userRepository.findByUserId(jwtUserDetails.getUserId());
 
         user.setTransactionType(patchUpdateFilterRequest.getTransactionType());
         user.setRealEstateType(patchUpdateFilterRequest.getRealEstateType());
