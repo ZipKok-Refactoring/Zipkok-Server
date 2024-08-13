@@ -33,7 +33,9 @@ public class SecurityConfig {
                 "/swagger-resources/*",
                 "/webjars/",
                 "/v3/api-docs/**",
-                "/auth/refreshToken/**");
+                "/oauth/kakao/callback",
+                "/auth/refreshToken",
+                "/address");
     }
 
     @Bean
