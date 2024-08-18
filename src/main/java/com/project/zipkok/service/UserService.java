@@ -1,8 +1,7 @@
 package com.project.zipkok.service;
 
-import com.project.zipkok.common.enums.*;
 import com.project.zipkok.common.exception.s3.FileUploadException;
-import com.project.zipkok.common.exception.user.KokOptionLoadException;
+import com.project.zipkok.common.exception.user.NoMatchUserException;
 import com.project.zipkok.common.exception.user.UserBadRequestException;
 import com.project.zipkok.common.service.RedisService;
 import com.project.zipkok.dto.*;
@@ -17,6 +16,7 @@ import com.project.zipkok.repository.*;
 import com.project.zipkok.util.FileUploadUtils;
 import com.project.zipkok.util.jwt.AuthTokens;
 import com.project.zipkok.util.jwt.JwtProvider;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +29,6 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.project.zipkok.common.response.status.BaseExceptionResponseStatus.*;
@@ -99,7 +98,7 @@ public class UserService {
     }
 
     private AuthTokens makeJwtToken(User user) {
-        return jwtProvider.createToken(user.getEmail(), user.getUserId());
+        return jwtProvider.createToken(JwtUserDetails.from(user));
     }
 
     private void addRedisEntry(User user, AuthTokens authTokens){
@@ -107,48 +106,48 @@ public class UserService {
     }
 
     @Transactional
-    public Objects setOnBoarding(PatchOnBoardingRequest patchOnBoardingRequest, long userId) {
+    public Objects setOnBoarding(PatchOnBoardingRequest patchOnBoardingRequest, JwtUserDetails jwtUserDetails) {
         log.info("{UserService.setOnBoarding}");
 
-        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(userId);
+        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
         user.setOnBoardingInfo(patchOnBoardingRequest);
 
         userRepository.save(user);
         return null;
     }
 
-    public GetMyPageResponse myPageLoad(long userId) {
+    public GetMyPageResponse myPageLoad(JwtUserDetails jwtUserDetails) {
         log.info("{UserService.myPageLoad}");
 
-        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(userId);
+        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
 
         return GetMyPageResponse.from(user);
     }
 
-    public GetMyPageDetailResponse myPageDetailLoad(long userId) {
+    public GetMyPageDetailResponse myPageDetailLoad(JwtUserDetails jwtUserDetails) {
         log.info("{UserService.myPageDetailLoad}");
 
-        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(userId);
+        User user = userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
 
         return GetMyPageDetailResponse.from(user);
     }
 
     @Transactional
-    public GetKokOptionLoadResponse loadKokOption(long userId) {
+    public GetKokOptionLoadResponse loadKokOption(JwtUserDetails jwtUserDetails) {
         log.info("{UserService.loadKokOption}");
 
-        List<Highlight> highlightList = highlightRepository.findAllByUserId(userId);
-        List<Option> optionList = optionRepository.findAllByUserIdWithDetailOption(userId);
+        List<Highlight> highlightList = highlightRepository.findAllByUserId(jwtUserDetails.getUserId());
+        List<Option> optionList = optionRepository.findAllByUserIdWithDetailOption(jwtUserDetails.getUserId());
 
         return GetKokOptionLoadResponse.of(highlightList, optionList);
     }
 
     @Transactional
-    public Object updateKokOption(long userId, PostUpdateKokOptionRequest postUpdateKokOptionRequest) {
+    public Object updateKokOption(JwtUserDetails jwtUserDetails, PostUpdateKokOptionRequest postUpdateKokOptionRequest) {
         log.info("{UserService.updateKokOption}");
 
-        updateHighlightList(userId, postUpdateKokOptionRequest);
-        updateOption(userId, postUpdateKokOptionRequest);
+        updateHighlightList(jwtUserDetails.getUserId(), postUpdateKokOptionRequest);
+        updateOption(jwtUserDetails.getUserId(), postUpdateKokOptionRequest);
 
         return null;
     }
@@ -192,11 +191,11 @@ public class UserService {
     }
 
     @Transactional
-    public Object logout(long userId) {
+    public Object logout(JwtUserDetails jwtUserDetails) {
         log.info("{UserService.logout}");
 
         try{
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserId(jwtUserDetails.getUserId());
 
             //user table status를 disable로 설정
             user.setStatus("disable");
@@ -218,7 +217,8 @@ public class UserService {
         log.info("{UserService.signout}");
 
         try {
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserIdWithZimAndKok(userId)
+                    .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
 
             //redis에 user Refresh token 삭제
             this.redisService.deleteValues(user.getEmail());
@@ -239,7 +239,8 @@ public class UserService {
         log.info("[UserService.deregister]");
 
         try {
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserIdWithZimAndKok(userId)
+                    .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
 
             this.redisService.deleteValues(user.getEmail());
 
@@ -288,12 +289,12 @@ public class UserService {
     }
 
     @Transactional
-    public Object deregisterV2(long userId) {
+    public Object deregisterV2(JwtUserDetails jwtUserDetails) {
 
         log.info("[UserService.deregisterV2");
 
         try {
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserId(jwtUserDetails.getUserId());
 
             this.redisService.deleteValues(user.getEmail());
 
@@ -324,12 +325,12 @@ public class UserService {
     }
 
     @Transactional
-    public Object updateMyInfo(long userId, MultipartFile file, PutUpdateMyInfoRequest putUpdateMyInfoRequest) {
+    public Object updateMyInfo(JwtUserDetails jwtUserDetails, MultipartFile file, PutUpdateMyInfoRequest putUpdateMyInfoRequest) {
         log.info("{UserService.updateMyInfo}");
 
-        User user = this.userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(userId);
+        User user = this.userRepository.findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
 
-        String imageUrl = settingProfileImage(userId, file);
+        String imageUrl = settingProfileImage(jwtUserDetails.getUserId(), file);
 
         user.setUpdateUserInfo(imageUrl, putUpdateMyInfoRequest);
 
@@ -351,10 +352,10 @@ public class UserService {
     }
 
     @Transactional
-    public Object updateFilter(long userId, PatchUpdateFilterRequest patchUpdateFilterRequest) {
+    public Object updateFilter(JwtUserDetails jwtUserDetails, PatchUpdateFilterRequest patchUpdateFilterRequest) {
         log.info("{UserService.updateFilter}");
 
-        User user = this.userRepository.findByUserId(userId);
+        User user = this.userRepository.findByUserId(jwtUserDetails.getUserId());
 
         user.setTransactionType(patchUpdateFilterRequest.getTransactionType());
         user.setRealEstateType(patchUpdateFilterRequest.getRealEstateType());

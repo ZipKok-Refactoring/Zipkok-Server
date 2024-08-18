@@ -2,18 +2,15 @@ package com.project.zipkok.dto;
 
 import com.project.zipkok.common.enums.Gender;
 import com.project.zipkok.common.enums.OAuthProvider;
+import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.common.enums.ValidEnum;
-import com.project.zipkok.model.DesireResidence;
 import com.project.zipkok.model.User;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
 @AllArgsConstructor
@@ -46,6 +43,7 @@ public class PostSignUpRequest {
                 .birthday(birthday)
                 .gender(gender)
                 .status("active")
+                .role(Role.USER)
                 .build();
     }
 }

@@ -15,6 +15,7 @@ public interface RealEstateRepository extends JpaRepository<RealEstate, Long> {
     @EntityGraph(attributePaths = {"realEstateImages"})
     RealEstate findById(long realEstateId);
 
+    @EntityGraph(attributePaths = {"realEstateImages"})
     List<RealEstate> findByLatitudeBetweenAndLongitudeBetween(double minLatitude, double maxLatitude, double minLongitude, double maxLongitude);
 
     @Query(value = "SELECT r " +

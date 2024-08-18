@@ -1,13 +1,16 @@
 package com.project.zipkok.service;
 
 import com.project.zipkok.common.enums.RealEstateType;
+import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.common.enums.TransactionType;
 import com.project.zipkok.common.exception.RealEstateException;
+import com.project.zipkok.common.exception.user.NoMatchUserException;
 import com.project.zipkok.dto.*;
 import com.project.zipkok.model.*;
 import com.project.zipkok.repository.RealEstateRepository;
 import com.project.zipkok.repository.UserRepository;
 import com.project.zipkok.util.GeoLocationUtils;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,13 +32,13 @@ public class RealEstateService {
     private final UserRepository userRepository;
 
     @Transactional
-    public GetRealEstateResponse getRealEstateInfo(Long userId, Long realEstateId) {
+    public GetRealEstateResponse getRealEstateInfo(JwtUserDetails jwtUserDetail, Long realEstateId) {
 
         log.info("[RealEstateService.getRealEstateInfo]");
 
 //        try {
             RealEstate realEstate = realEstateRepository.findById(realEstateId.longValue());
-            User user = userRepository.findByUserId(userId);
+            User user = userRepository.findByUserId(jwtUserDetail.getUserId());
 
 
             List<String> realEstateImages = new ArrayList<>();
@@ -87,10 +90,10 @@ public class RealEstateService {
 //        }
     }
 
-    public PostRealEstateResponse registerRealEstate(long userId, PostRealEstateRequest postRealEstateRequest) {
+    public PostRealEstateResponse registerRealEstate(JwtUserDetails jwtUserDetail, PostRealEstateRequest postRealEstateRequest) {
 
 //        try {
-            User user = userRepository.findByUserId(userId);
+            User user = userRepository.findByUserId(jwtUserDetail.getUserId());
 
             RealEstate realEstate = RealEstate.builder()
                     .imageUrl(null)
@@ -106,7 +109,7 @@ public class RealEstateService {
                     .pyeongsu(postRealEstateRequest.getPyeongsu())
                     .realEstateType(postRealEstateRequest.getRealEstateType())
                     .floorNum(postRealEstateRequest.getFloorNum())
-                    .userId(userId)
+                    .userId(jwtUserDetail.getUserId())
                     .agent(null)
                     .detailAddress(postRealEstateRequest.getDetailAddress())
                     .status("active")
@@ -120,9 +123,9 @@ public class RealEstateService {
 //        }
     }
 
-    public GetMapRealEstateResponse getRealEstate(long userId, GetRealEstateOnMapRequest getRealEstateOnMapRequest) {
-        log.info("{UserService.getRealEstate}");
+    public GetMapRealEstateResponse getRealEstate(JwtUserDetails jwtUserDetail, GetRealEstateOnMapRequest getRealEstateOnMapRequest) {
 
+        log.info("{UserService.getRealEstate} userId: {}, role: {}", jwtUserDetail.getUserId(), jwtUserDetail.getRole());
 
         List<RealEstate> realEstateList = this.realEstateRepository.findByLatitudeBetweenAndLongitudeBetween(getRealEstateOnMapRequest.getSouthWestLat(),getRealEstateOnMapRequest.getNorthEastLat(),getRealEstateOnMapRequest.getSouthWestLon(),getRealEstateOnMapRequest.getNorthEastLon());
 
@@ -133,7 +136,7 @@ public class RealEstateService {
         TransactionType userTransactionType;
         RealEstateType userRealEstateType;
 
-        if(userId == -1) {
+        if(jwtUserDetail.getRole().equals(Role.GUEST)) {
             userTransactionType = getRealEstateOnMapRequest.getTransactionType();
             userRealEstateType = getRealEstateOnMapRequest.getRealEstateType();
 
@@ -183,7 +186,8 @@ public class RealEstateService {
 
         } else {
 
-            User user = this.userRepository.findByUserId(userId);
+            User user = this.userRepository.findByUserIdWithZimAndKok(jwtUserDetail.getUserId())
+                    .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
 
             GetLoginMapRealEstateResponse getLoginMapRealEstateResponse = new GetLoginMapRealEstateResponse();
 
@@ -225,7 +229,7 @@ public class RealEstateService {
             //realEstateInfo mapping
             List<GetLoginMapRealEstateResponse.RealEstateInfo> realEstateInfoList = realEstateList
                     .stream()
-                    .filter(result -> result.getUserId() == null || result.getUserId().equals(userId))
+                    .filter(result -> result.getUserId() == null || result.getUserId().equals(jwtUserDetail.getUserId()))
                     .map(result -> GetLoginMapRealEstateResponse.RealEstateInfo.builder()
                             .realEstateId(result.getRealEstateId())
                             .imageURL(result.getImageUrl())

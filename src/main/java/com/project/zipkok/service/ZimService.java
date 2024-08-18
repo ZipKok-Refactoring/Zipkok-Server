@@ -9,6 +9,7 @@ import com.project.zipkok.model.Zim;
 import com.project.zipkok.repository.RealEstateRepository;
 import com.project.zipkok.repository.UserRepository;
 import com.project.zipkok.repository.ZimRepository;
+import com.project.zipkok.util.jwt.JwtUserDetails;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,10 +27,10 @@ public class ZimService {
     private final UserRepository userRepository;
     private final RealEstateRepository realEstateRepository;
 
-    public GetZimLoadResponse zimLoad(long userId) {
+    public GetZimLoadResponse zimLoad(JwtUserDetails jwtUserDetail) {
         log.info("{ZimService.zimLoad}");
 
-        User user = this.userRepository.findByUserId(userId);
+        User user = this.userRepository.findByUserId(jwtUserDetail.getUserId());
         List<Zim> zimList = this.zimRepository.findAllByUser(user);
 
         if(zimList == null){
@@ -51,10 +52,10 @@ public class ZimService {
         return getZimLoadResponse;
     }
 
-    public Object zimRegister(long userId, long realEstateId) {
+    public Object zimRegister(JwtUserDetails jwtUserDetail, long realEstateId) {
         log.info("{ZimService.zimRegister}");
 
-        User user = this.userRepository.findByUserId(userId);
+        User user = this.userRepository.findByUserId(jwtUserDetail.getUserId());
         RealEstate realEstate = this.realEstateRepository.findById(realEstateId);
         List<Zim> zimList = this.zimRepository.findAllByUser(user);
 
@@ -73,10 +74,10 @@ public class ZimService {
         return null;
     }
 
-    public Object zimDelete(long userId, Long realEstateId) {
+    public Object zimDelete(JwtUserDetails jwtUserDetail, Long realEstateId) {
         log.info("{ZimService.zimDelete}");
 
-        User user = this.userRepository.findByUserId(userId);
+        User user = this.userRepository.findByUserId(jwtUserDetail.getUserId());
         List<Zim> zimList = this.zimRepository.findAllByUser(user);
 
         for(Zim zim : zimList){
