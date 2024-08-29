@@ -3,7 +3,6 @@ package com.project.zipkok.model;
 import com.project.zipkok.common.enums.RealEstateType;
 import com.project.zipkok.common.enums.TransactionType;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +14,6 @@ import java.util.List;
 @Table(name = "RealEstate")
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class RealEstate {
 
     @Id
@@ -31,23 +28,23 @@ public class RealEstate {
     private String address;
 
     @Column(name = "latitude", nullable = false)
-    private double latitude;
+    private Double latitude;
 
     @Column(name = "longitude", nullable = false)
-    private double longitude;
+    private Double longitude;
 
     @Column(name = "transaction_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private TransactionType transactionType;
 
     @Column(name = "deposit", nullable = false)
-    private long deposit;
+    private Long deposit;
 
     @Column(name = "price", nullable = false)
-    private long price;
+    private Long price;
 
     @Column(name = "administrative_fee")
-    private int administrativeFee;
+    private Integer administrativeFee;
 
     @Column(name = "detail")
     private String detail;
@@ -56,7 +53,7 @@ public class RealEstate {
     private Float areaSize;
 
     @Column(name = "pyeongsu")
-    private long pyeongsu;
+    private Integer pyeongsu;
 
     @Column(name = "realestate_type", nullable = false)
     @Enumerated(EnumType.STRING)
@@ -80,7 +77,8 @@ public class RealEstate {
     @OneToMany(mappedBy = "realEstate",orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<RealEstateImage> realEstateImages = new ArrayList<>();
 
-    public RealEstate(String address, double latitude, double longitude, TransactionType transactionType, long deposit, long price, RealEstateType realEstateType) {
+    @Builder
+    public RealEstate(String address, Double latitude, Double longitude, TransactionType transactionType, Long deposit, Long price, RealEstateType realEstateType, Integer administrativeFee, String agent, String detail, Float areaSize, Integer pyeongsu, Integer floorNum, String imageUrl, String detailAddress, Long userId) {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
@@ -88,6 +86,15 @@ public class RealEstate {
         this.deposit = deposit;
         this.price = price;
         this.realEstateType = realEstateType;
+        this.administrativeFee = administrativeFee;
+        this.agent = agent;
+        this.detail = detail;
+        this.areaSize = areaSize;
+        this.pyeongsu = pyeongsu;
+        this.floorNum = floorNum;
+        this.imageUrl = imageUrl;
+        this.detailAddress = detailAddress;
+        this.userId = userId;
         this.status = "active";
     }
 }

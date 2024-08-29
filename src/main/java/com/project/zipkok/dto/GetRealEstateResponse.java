@@ -41,7 +41,7 @@ public class GetRealEstateResponse {
 
     private Float areaSize;
 
-    private Long pyeongsu;
+    private Integer pyeongsu;
 
     private String realEstateType;
 

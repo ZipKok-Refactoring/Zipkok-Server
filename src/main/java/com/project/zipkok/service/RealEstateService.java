@@ -112,7 +112,6 @@ public class RealEstateService {
                     .userId(jwtUserDetail.getUserId())
                     .agent(null)
                     .detailAddress(postRealEstateRequest.getDetailAddress())
-                    .status("active")
                     .build();
 
             Long realEstateId = realEstateRepository.save(realEstate).getRealEstateId();
