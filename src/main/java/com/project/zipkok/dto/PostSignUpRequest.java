@@ -4,6 +4,8 @@ import com.project.zipkok.common.enums.Gender;
 import com.project.zipkok.common.enums.OAuthProvider;
 import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.common.enums.ValidEnum;
+import com.project.zipkok.model.DesireResidence;
+import com.project.zipkok.model.TransactionPriceConfig;
 import com.project.zipkok.model.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -44,6 +46,8 @@ public class PostSignUpRequest {
                 .gender(gender)
                 .status("active")
                 .role(Role.USER)
+                .transactionPriceConfig(new TransactionPriceConfig())
+                .desireResidence(new DesireResidence())
                 .build();
     }
 }

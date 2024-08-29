@@ -24,6 +24,13 @@ public class GetRealEstateResponse {
     public static class ImageInfo {
         private int imageNumber;
         private List<String> imageURL;
+
+        public static ImageInfo from(List<String> imageURL) {
+            return ImageInfo.builder()
+                    .imageNumber(imageURL.size())
+                    .imageURL(imageURL)
+                    .build();
+        }
     }
 
     private String address;

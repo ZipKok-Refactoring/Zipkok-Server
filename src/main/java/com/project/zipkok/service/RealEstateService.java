@@ -36,58 +36,42 @@ public class RealEstateService {
 
         log.info("[RealEstateService.getRealEstateInfo]");
 
-//        try {
-            RealEstate realEstate = realEstateRepository.findById(realEstateId.longValue());
-            User user = userRepository.findByUserId(jwtUserDetail.getUserId());
+        RealEstate realEstate = realEstateRepository.findById(realEstateId.longValue())
+                .orElseThrow(() -> new RealEstateException(INVALID_PROPERTY_ID));
+
+        User user = userRepository.findByUserIdWithZimAndKok(jwtUserDetail.getUserId())
+                .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
+
+        List<String> realEstateImages = getAllImageUrlsFromRealEstate(realEstate);
+
+        List<GetRealEstateResponse.RealEstateBriefInfo> neighborRealEstates = findNearbyRealEstates(realEstate.getLatitude(), realEstate.getLongitude(), 5)
+                .stream()
+                .map(GetRealEstateResponse.RealEstateBriefInfo::from)
+                .toList();
 
 
-            List<String> realEstateImages = new ArrayList<>();
+        GetRealEstateResponse response = GetRealEstateResponse.of(realEstate,
+                user.getZims().stream().map(Zim::getRealEstate).collect(Collectors.toSet()).contains(realEstate),
+                user.getKoks().stream().map(Kok::getRealEstate).collect(Collectors.toSet()).contains(realEstate),
+                GetRealEstateResponse.ImageInfo.from(realEstateImages),
+                neighborRealEstates);
 
-            realEstateImages.add(realEstate.getImageUrl());
+        return response;
+    }
 
-            realEstate.getRealEstateImages()
-                    .stream()
-                    .map(RealEstateImage::getImageUrl)
-                    .forEach(realEstateImages::add);
+    private static List<String> getAllImageUrlsFromRealEstate(RealEstate realEstate) {
+        List<String> realEstateImages = new ArrayList<>();
 
-            List<GetRealEstateResponse.RealEstateBriefInfo> neighborRealEstates = findNearbyRealEstates(realEstate.getLatitude(), realEstate.getLongitude(), 5)
-                    .stream()
-                    .map(result -> GetRealEstateResponse.RealEstateBriefInfo.builder()
-                            .realEstateId(result.getRealEstateId())
-                            .imageUrl(result.getImageUrl())
-                            .address(result.getAddress())
-                            .deposit(result.getDeposit())
-                            .price(result.getPrice())
-                            .build())
-                    .toList();
+        // 대표 이미지
+        realEstateImages.add(realEstate.getImageUrl());
 
+        // 부가 이미지
+        realEstate.getRealEstateImages()
+                .stream()
+                .map(RealEstateImage::getImageUrl)
+                .forEach(realEstateImages::add);
 
-            GetRealEstateResponse response = GetRealEstateResponse.builder()
-                    .realEstateId(realEstate.getRealEstateId())
-                    .imageInfo(new GetRealEstateResponse.ImageInfo(realEstateImages.size(), realEstateImages))
-                    .address(realEstate.getAddress())
-                    .detailAddress(realEstate.getDetailAddress())
-                    .transactionType(realEstate.getTransactionType().toString())
-                    .deposit(realEstate.getDeposit())
-                    .price(realEstate.getPrice())
-                    .detail(realEstate.getDetail())
-                    .areaSize(realEstate.getAreaSize())
-                    .pyeongsu(realEstate.getPyeongsu())
-                    .realEstateType(realEstate.getRealEstateType().toString())
-                    .floorNum(realEstate.getFloorNum())
-                    .administrativeFee(realEstate.getAdministrativeFee())
-                    .latitude(realEstate.getLatitude())
-                    .longitude(realEstate.getLongitude())
-                    .isZimmed(user.getZims().stream().map(Zim::getRealEstate).collect(Collectors.toSet()).contains(realEstate))
-                    .isKokked(user.getKoks().stream().map(Kok::getRealEstate).collect(Collectors.toSet()).contains(realEstate))
-                    .neighborRealEstates(neighborRealEstates)
-                    .build();
-
-            return response;
-//        } catch (Exception e) {
-//            log.error(e.getMessage());
-//            throw new RealEstateException(INVALID_PROPERTY_ID);
-//        }
+        return realEstateImages;
     }
 
     public PostRealEstateResponse registerRealEstate(JwtUserDetails jwtUserDetail, PostRealEstateRequest postRealEstateRequest) {

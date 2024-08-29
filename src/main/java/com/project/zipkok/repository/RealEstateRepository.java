@@ -8,18 +8,20 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface RealEstateRepository extends JpaRepository<RealEstate, Long> {
 
     @EntityGraph(attributePaths = {"realEstateImages"})
-    RealEstate findById(long realEstateId);
+    Optional<RealEstate> findById(long realEstateId);
 
     @EntityGraph(attributePaths = {"realEstateImages"})
     List<RealEstate> findByLatitudeBetweenAndLongitudeBetween(double minLatitude, double maxLatitude, double minLongitude, double maxLongitude);
 
     @Query(value = "SELECT r " +
             "FROM RealEstate r " +
+            "JOIN FETCH r.realEstateImages " +
             "WHERE r.latitude BETWEEN :minLat AND :maxLat " +
             "AND r.longitude BETWEEN :minLon AND :maxLon " +
             "AND (r.latitude <> :latitude OR r.longitude <> :longitude) " +
