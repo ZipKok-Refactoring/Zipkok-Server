@@ -69,7 +69,7 @@ public class JwtProvider {
 
         } catch (ExpiredJwtException e) {
             log.error("[ExpiredJwtException]");
-            throw new JwtInvalidTokenException(EXPIRED_TOKEN);
+            return true;
         } catch (UnsupportedJwtException e) {
             log.error("[UnsupportedJwtException]");
             throw new JwtUnsupportedTokenException(UNSUPPORTED_TOKEN_TYPE);
