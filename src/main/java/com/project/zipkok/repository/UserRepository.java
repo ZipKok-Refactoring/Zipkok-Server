@@ -4,6 +4,7 @@ import com.project.zipkok.model.User;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
@@ -29,7 +30,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "JOIN FETCH u.transactionPriceConfig t "
             + "WHERE u.userId = :userId"
     )
-    User findByUserIdWithDesireResidenceAndTransactionPriceConfig(Long userId);
+    User findByUserIdWithDesireResidenceAndTransactionPriceConfig(@Param("userId") Long userId);
 
     @Query("SELECT u "
             + "FROM User u "
