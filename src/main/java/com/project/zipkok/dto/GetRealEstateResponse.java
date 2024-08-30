@@ -113,6 +113,10 @@ public class GetRealEstateResponse {
                 .administrativeFee(realEstate.getAdministrativeFee())
                 .latitude(realEstate.getLatitude())
                 .longitude(realEstate.getLongitude())
+                .isZimmed(isZimmed)
+                .isKokked(isKokked)
+                .imageInfo(imageInfo)
+                .neighborRealEstates(neighborRealEstates)
                 .build();
     }
 }
