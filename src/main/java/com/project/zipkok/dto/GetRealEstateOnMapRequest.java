@@ -32,7 +32,6 @@ public class GetRealEstateOnMapRequest {
     @Enumerated(EnumType.STRING)
     private RealEstateType realEstateType;
 
-
     private Long depositMin;
     private Long depositMax;
     private Long priceMin;

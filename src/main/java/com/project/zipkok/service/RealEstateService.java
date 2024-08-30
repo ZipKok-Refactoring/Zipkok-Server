@@ -50,13 +50,11 @@ public class RealEstateService {
                 .toList();
 
 
-        GetRealEstateResponse response = GetRealEstateResponse.of(realEstate,
+        return GetRealEstateResponse.of(realEstate,
                 user.getZims().stream().map(Zim::getRealEstate).collect(Collectors.toSet()).contains(realEstate),
                 user.getKoks().stream().map(Kok::getRealEstate).collect(Collectors.toSet()).contains(realEstate),
                 GetRealEstateResponse.ImageInfo.from(realEstateImages),
                 neighborRealEstates);
-
-        return response;
     }
 
     private static List<String> getAllImageUrlsFromRealEstate(RealEstate realEstate) {
@@ -76,24 +74,7 @@ public class RealEstateService {
 
     public PostRealEstateResponse registerRealEstate(JwtUserDetails jwtUserDetail, PostRealEstateRequest postRealEstateRequest) {
 
-            RealEstate realEstate = RealEstate.builder()
-                    .imageUrl(null)
-                    .address(postRealEstateRequest.getAddress())
-                    .latitude(postRealEstateRequest.getLatitude())
-                    .longitude(postRealEstateRequest.getLongitude())
-                    .transactionType(TransactionType.valueOf(postRealEstateRequest.getTransactionType()))
-                    .deposit(postRealEstateRequest.getDeposit())
-                    .price(postRealEstateRequest.getPrice())
-                    .administrativeFee(postRealEstateRequest.getAdministrativeFee())
-                    .detail(postRealEstateRequest.getRealEstateName())
-                    .areaSize(null)
-                    .pyeongsu(postRealEstateRequest.getPyeongsu())
-                    .realEstateType(RealEstateType.valueOf(postRealEstateRequest.getRealEstateType()))
-                    .floorNum(postRealEstateRequest.getFloorNum())
-                    .userId(jwtUserDetail.getUserId())
-                    .agent(null)
-                    .detailAddress(postRealEstateRequest.getDetailAddress())
-                    .build();
+            RealEstate realEstate = RealEstate.from(jwtUserDetail.getUserId(), postRealEstateRequest);
 
             Long realEstateId = realEstateRepository.save(realEstate).getRealEstateId();
 

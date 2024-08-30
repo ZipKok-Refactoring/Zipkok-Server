@@ -2,6 +2,7 @@ package com.project.zipkok.model;
 
 import com.project.zipkok.common.enums.RealEstateType;
 import com.project.zipkok.common.enums.TransactionType;
+import com.project.zipkok.dto.PostRealEstateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -96,5 +97,24 @@ public class RealEstate {
         this.detailAddress = detailAddress;
         this.userId = userId;
         this.status = "active";
+    }
+
+    public static RealEstate from(Long userId, PostRealEstateRequest postRealEstateRequest) {
+        return RealEstate.builder()
+                .address(postRealEstateRequest.getAddress())
+                .latitude(postRealEstateRequest.getLatitude())
+                .longitude(postRealEstateRequest.getLongitude())
+                .transactionType(TransactionType.valueOf(postRealEstateRequest.getTransactionType()))
+                .deposit(postRealEstateRequest.getDeposit())
+                .price(postRealEstateRequest.getPrice())
+                .realEstateType(RealEstateType.valueOf(postRealEstateRequest.getRealEstateType()))
+                .administrativeFee(postRealEstateRequest.getAdministrativeFee())
+                .detail(postRealEstateRequest.getRealEstateName())
+                .pyeongsu(postRealEstateRequest.getPyeongsu())
+                .floorNum(postRealEstateRequest.getFloorNum())
+                .detailAddress(postRealEstateRequest.getDetailAddress())
+                .userId(userId)
+                .floorNum(postRealEstateRequest.getFloorNum())
+                .build();
     }
 }
