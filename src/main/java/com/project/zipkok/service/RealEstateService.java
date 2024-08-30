@@ -76,22 +76,19 @@ public class RealEstateService {
 
     public PostRealEstateResponse registerRealEstate(JwtUserDetails jwtUserDetail, PostRealEstateRequest postRealEstateRequest) {
 
-//        try {
-            User user = userRepository.findByUserId(jwtUserDetail.getUserId());
-
             RealEstate realEstate = RealEstate.builder()
                     .imageUrl(null)
                     .address(postRealEstateRequest.getAddress())
                     .latitude(postRealEstateRequest.getLatitude())
                     .longitude(postRealEstateRequest.getLongitude())
-                    .transactionType(postRealEstateRequest.getTransactionType())
+                    .transactionType(TransactionType.valueOf(postRealEstateRequest.getTransactionType()))
                     .deposit(postRealEstateRequest.getDeposit())
                     .price(postRealEstateRequest.getPrice())
                     .administrativeFee(postRealEstateRequest.getAdministrativeFee())
                     .detail(postRealEstateRequest.getRealEstateName())
                     .areaSize(null)
                     .pyeongsu(postRealEstateRequest.getPyeongsu())
-                    .realEstateType(postRealEstateRequest.getRealEstateType())
+                    .realEstateType(RealEstateType.valueOf(postRealEstateRequest.getRealEstateType()))
                     .floorNum(postRealEstateRequest.getFloorNum())
                     .userId(jwtUserDetail.getUserId())
                     .agent(null)
@@ -101,9 +98,7 @@ public class RealEstateService {
             Long realEstateId = realEstateRepository.save(realEstate).getRealEstateId();
 
             return new PostRealEstateResponse(realEstateId);
-//        } catch (Exception e) {
-//            throw new RealEstateException(PROPERTY_REGISTRATION_FAILURE);
-//        }
+
     }
 
     public GetMapRealEstateResponse getRealEstate(JwtUserDetails jwtUserDetail, GetRealEstateOnMapRequest getRealEstateOnMapRequest) {
