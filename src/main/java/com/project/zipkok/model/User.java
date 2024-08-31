@@ -64,10 +64,12 @@ public class User {
     @Column(name = "status", nullable = false)
     private String status = "active";
 
-    @OneToOne(mappedBy = "user",orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "desire_residence_id", nullable = true)
     private DesireResidence desireResidence;
 
-    @OneToOne(mappedBy = "user",orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToOne(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "transaction_config_id", nullable = true)
     private TransactionPriceConfig transactionPriceConfig;
 
     @ElementCollection

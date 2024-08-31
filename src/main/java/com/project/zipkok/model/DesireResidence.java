@@ -29,8 +29,7 @@ public class DesireResidence {
     @Column(name = "status", nullable = false)
     private String status = "active";
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(mappedBy = "desireResidence", orphanRemoval = true, cascade = CascadeType.ALL)
     private User user;
 
     public DesireResidence(User user) {
@@ -47,6 +46,14 @@ public class DesireResidence {
         this.address = putUpdateMyInfoRequest.getAddress();
         this.latitude = putUpdateMyInfoRequest.getLatitude();
         this.longitude = putUpdateMyInfoRequest.getLongitude();
+    }
+
+    @Builder
+    public DesireResidence(String address, Double latitude, Double longitude) {
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.status = "active";
     }
 
 }

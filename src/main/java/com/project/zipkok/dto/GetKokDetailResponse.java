@@ -67,7 +67,7 @@ public class GetKokDetailResponse {
                 .price(realEstate.getPrice())
                 .detail(realEstate.getDetail())
                 .areaSize(realEstate.getAreaSize())
-                .pyeongsu((int) realEstate.getPyeongsu())
+                .pyeongsu(realEstate.getPyeongsu())
                 .realEstateType(realEstate.getRealEstateType().toString())
                 .floorNum(realEstate.getFloorNum())
                 .administrativeFee(realEstate.getAdministrativeFee())

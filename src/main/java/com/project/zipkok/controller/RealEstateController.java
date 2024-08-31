@@ -43,23 +43,9 @@ public class RealEstateController {
     @Operation(summary = "매물 직접등록 API", description = "매물을 직접 등록할 때 사용하는 API입니다.")
     @PostMapping("")
     public BaseResponse<PostRealEstateResponse> registerRealEstate(@Parameter(hidden = true) @AuthenticationPrincipal JwtUserDetails jwtUserDetail,
-                                                                   @Validated @RequestBody PostRealEstateRequest postRealEstateRequest, BindingResult bindingResult) {
+                                                                   @Validated @RequestBody PostRealEstateRequest postRealEstateRequest) {
 
         log.info("[RealEstateController.registerReslEstate]");
-
-        if(bindingResult.hasFieldErrors("realEstateName")) {
-            throw new RealEstateException(INVALID_PROPERTY_NAME);
-        } else if (bindingResult.hasFieldErrors("transactioinType") || bindingResult.hasFieldErrors("realEstateType")) {
-            throw new RealEstateException(INVALID_RENTAL_PRICE_FORMAT);
-        } else if (bindingResult.hasFieldErrors("administrativeFee")) {
-            throw new RealEstateException(INVALID_MANAGEMENT_FEE_FORMAT);
-        } else if (bindingResult.hasFieldErrors("address")) {
-            throw new RealEstateException(INVALID_ADDRESS_FORMAT);
-        } else if (bindingResult.hasFieldErrors("latitude")) {
-            throw new RealEstateException(INVALID_LATITUDE_FORMAT);
-        } else if (bindingResult.hasFieldErrors("longitude")) {
-            throw new RealEstateException(INVALID_LONGITUDE_FORMAT);
-        }
 
         return new BaseResponse<>(PROPERTY_REGISTRATION_SUCCESS, realEstateService.registerRealEstate(jwtUserDetail, postRealEstateRequest));
     }
@@ -67,22 +53,8 @@ public class RealEstateController {
     @Operation(summary = "홈 화면 지도 API", description = "지도 상에 띄울 매물을 받기 위한 api입니다.")
     @GetMapping("")
     public BaseResponse<GetMapRealEstateResponse> realEstateOnMap(@Parameter(hidden=true) @AuthenticationPrincipal JwtUserDetails jwtUserDetail,
-                                                                       @Validated @ModelAttribute GetRealEstateOnMapRequest getRealEstateOnMapRequest,
-                                                                       BindingResult bindingResult){
+                                                                       @Validated @ModelAttribute GetRealEstateOnMapRequest getRealEstateOnMapRequest){
         log.info("{UserController.realEstateOnMap}");
-
-        if(bindingResult.hasFieldErrors("southWestLat") ||
-                bindingResult.hasFieldErrors("northEastLat")){
-            throw new RealEstateException(INVALID_LATITUDE_FORMAT);
-        }
-        if(bindingResult.hasFieldErrors("southWestLon") ||
-                bindingResult.hasFieldErrors("northEastLon")){
-            throw new RealEstateException(INVALID_LONGITUDE_FORMAT);
-        }
-        if(bindingResult.hasErrors()){
-            throw new RealEstateException(MIN_POINT_IS_BIGGER_THAN_MAX_POINT);
-        }
-
 
         return new BaseResponse<>(PROPERTY_MAP_QUERY_SUCCESS, this.realEstateService.getRealEstate(jwtUserDetail, getRealEstateOnMapRequest));
     }

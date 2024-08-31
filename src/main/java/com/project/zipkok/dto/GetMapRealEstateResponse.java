@@ -3,8 +3,6 @@ package com.project.zipkok.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.project.zipkok.common.enums.RealEstateType;
 import com.project.zipkok.common.enums.TransactionType;
-import com.project.zipkok.model.Kok;
-import com.project.zipkok.model.Zim;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
@@ -54,29 +52,4 @@ public interface GetMapRealEstateResponse {
         private boolean isKokked;
 
     }
-
-
-//        public static class RealEstateInfoBuilder{
-//            private boolean isZimmed;
-//            private boolean isKokked;
-//
-//            public RealEstateInfo.RealEstateInfoBuilder isZimmed(Zim zim){
-//                if(zim == null){
-//                    this.isZimmed = false;
-//                } else {
-//                    this.isZimmed = true;
-//                }
-//                return this;
-//            }
-//
-//            public RealEstateInfo.RealEstateInfoBuilder isKokked(Kok kok){
-//                if(kok == null){
-//                    this.isKokked = false;
-//                } else {
-//                    this.isKokked = true;
-//                }
-//                return this;
-//            }
-//        }
-
 }
