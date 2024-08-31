@@ -24,14 +24,14 @@ public class PostSignUpRequest {
     private String nickname;
 
     @ValidEnum(enumClass = OAuthProvider.class)
-    private OAuthProvider oauthProvider;
+    private String oauthProvider;
 
     @NotBlank
     @Email
     private String email;
 
     @ValidEnum(enumClass = Gender.class)
-    private Gender gender;
+    private String gender;
 
     @NotBlank
     @Size(max =6)
@@ -40,10 +40,10 @@ public class PostSignUpRequest {
     public User toEntity() {
         return User.builder()
                 .nickname(nickname)
-                .oAuthProvider(oauthProvider)
+                .oAuthProvider(OAuthProvider.valueOf(oauthProvider))
                 .email(email)
                 .birthday(birthday)
-                .gender(gender)
+                .gender(Gender.valueOf(gender))
                 .status("active")
                 .role(Role.USER)
                 .transactionPriceConfig(new TransactionPriceConfig())
