@@ -1,7 +1,10 @@
 package com.project.zipkok.kok.fixture;
 
 import com.project.zipkok.model.RealEstate;
+import com.project.zipkok.model.RealEstateImage;
 import org.springframework.test.util.ReflectionTestUtils;
+
+import java.util.List;
 
 import static com.project.zipkok.common.enums.RealEstateType.APARTMENT;
 import static com.project.zipkok.common.enums.RealEstateType.ONEROOM;
@@ -10,7 +13,7 @@ import static com.project.zipkok.common.enums.TransactionType.PURCHASE;
 
 public class RealEstateFixture {
 
-    public static final RealEstate DUMMY_REALSTATE = RealEstate.builder()
+    public static final RealEstate DUMMY_REALESTATE = RealEstate.builder()
             .address("PURCHASE_APARTMENT_02_ADDRESS")
             .transactionType(MONTHLY)
             .realEstateType(ONEROOM)
@@ -27,9 +30,13 @@ public class RealEstateFixture {
             .floorNum(2)
             .administrativeFee(5000)
             .price(500)
+            .imageUrl("test/test")
             .build();
 
+    public static final RealEstateImage DUMMY_REALESATE_IMAGE = new RealEstateImage("https://test.com", DUMMY_REALESTATE);
+
     static {
-        ReflectionTestUtils.setField(DUMMY_REALSTATE, "realEstateId", 1L);
+        ReflectionTestUtils.setField(DUMMY_REALESTATE, "realEstateId", 1L);
+        ReflectionTestUtils.setField(DUMMY_REALESTATE, "realEstateImages", List.of(DUMMY_REALESATE_IMAGE));
     }
 }

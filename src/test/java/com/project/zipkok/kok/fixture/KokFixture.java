@@ -26,8 +26,8 @@ public class KokFixture {
         ReflectionTestUtils.setField(KOK_01, "checkedFurnitures", List.of(DUMMY_CHECKED_FURNITURE));
         ReflectionTestUtils.setField(KOK_01, "checkedImpressions", List.of(DUMMY_CHECKED_IMPRESSION));
         ReflectionTestUtils.setField(KOK_01, "checkedHighlights", List.of(DUMMY_CHECKED_HIGHLIGHT));
-        ReflectionTestUtils.setField(KOK_01, "checkedDetailOptions", Set.of(DUMMY_CHECKED_DETAIL_OPTION));
-        ReflectionTestUtils.setField(KOK_01, "checkedOptions", Set.of(DUMMY_CHECKED_OPTION));
+        ReflectionTestUtils.setField(KOK_01, "checkedDetailOptions", Set.of(DUMMY_CHECKED_DETAIL_OPTION, DUMMY_CHECKED_DETAIL_OPTION2, DUMMY_CHECKED_DETAIL_OPTION3));
+        ReflectionTestUtils.setField(KOK_01, "checkedOptions", Set.of(DUMMY_CHECKED_OPTION, DUMMY_CHECKED_OPTION2, DUMMY_CHECKED_OPTION3));
         ReflectionTestUtils.setField(KOK_01, "kokImages", List.of(DUMMY_KOK_IMAGE));
         ReflectionTestUtils.setField(KOK_01, "star", DUMMY_STAR);
     }

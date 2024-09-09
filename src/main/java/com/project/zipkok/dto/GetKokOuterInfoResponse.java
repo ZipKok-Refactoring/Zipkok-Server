@@ -3,6 +3,7 @@ package com.project.zipkok.dto;
 import com.project.zipkok.common.enums.OptionCategory;
 import com.project.zipkok.model.*;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public class GetKokOuterInfoResponse {
     private List<String> highlights;
     private List<OuterOption> options;
 
-    @Getter
+    @Data
     @Builder
     public static class OuterOption {
         private String option;

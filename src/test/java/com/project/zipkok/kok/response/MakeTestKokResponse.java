@@ -1,6 +1,7 @@
-package com.project.zipkok.kok.controller;
+package com.project.zipkok.kok.response;
 
 import com.project.zipkok.dto.*;
+import com.project.zipkok.model.DetailOption;
 import com.project.zipkok.model.Kok;
 import com.project.zipkok.model.KokImage;
 import com.project.zipkok.model.RealEstate;
@@ -11,9 +12,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static com.project.zipkok.kok.fixture.CheckedFixture.*;
+import static com.project.zipkok.kok.fixture.CheckedFixture.DUMMY_FURNITURE_OPTION;
 import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
+import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALSTATE;
+import static com.project.zipkok.kok.fixture.StarFixture.DUMMY_STAR;
 
-public class MakeTestKokControllerResponse {
+public class MakeTestKokResponse {
 
     public static final Kok kok = KOK_01;
 
@@ -193,6 +198,53 @@ public class MakeTestKokControllerResponse {
 
     public static MockMultipartFile makeTestPostOrPutKokRequest(){
         return new MockMultipartFile("file", "test.txt", "text/plain", "test".getBytes());
+    }
+
+    public static PostOrPutKokRequest makePostOrPutKokRequest() {
+        PostOrPutKokRequest.ReviewInfo reviewInfo = PostOrPutKokRequest.ReviewInfo.builder()
+                .checkedImpressions(List.of(DUMMY_IMPRESSION.getImpressionTitle()))
+                .facilityStarCount(DUMMY_STAR.getFacilityStar())
+                .infraStarCount(DUMMY_STAR.getInfraStar())
+                .structureStarCount(DUMMY_STAR.getStructureStar())
+                .vibeStarCount(DUMMY_STAR.getVibeStar())
+                .reviewText(KOK_01.getReview())
+                .build();
+
+        List<PostOrPutKokRequest.Option> options_outer = new ArrayList<>();
+        List<PostOrPutKokRequest.Option> options_inner = new ArrayList<>();
+        List<PostOrPutKokRequest.Option> options_contract = new ArrayList<>();
+
+        options_outer.add(
+                PostOrPutKokRequest.Option.builder()
+                        .optionId(DUMMY_OPTION_OUTER.getOptionId())
+                        .checkedDetailOptionIds(DUMMY_OPTION_OUTER.getDetailOptions().stream().map(DetailOption::getDetailOptionId).toList())
+                        .build()
+        );
+
+        options_inner.add(
+                PostOrPutKokRequest.Option.builder()
+                        .optionId(DUMMY_OPTION_INNER.getOptionId())
+                        .checkedDetailOptionIds(DUMMY_OPTION_INNER.getDetailOptions().stream().map(DetailOption::getDetailOptionId).toList())
+                        .build()
+        );
+        options_contract.add(
+                PostOrPutKokRequest.Option.builder()
+                        .optionId(DUMMY_OPTION_CONTRACT.getOptionId())
+                        .checkedDetailOptionIds(DUMMY_OPTION_CONTRACT.getDetailOptions().stream().map(DetailOption::getDetailOptionId).toList())
+                        .build()
+        );
+
+        return PostOrPutKokRequest.builder()
+                .kokId(KOK_01.getKokId())
+                .realEstateId(DUMMY_REALSTATE.getRealEstateId())
+                .checkedHighlights(List.of(DUMMY_HIGHLIGHT.getTitle()))
+                .checkedFurnitureOptions(List.of(DUMMY_FURNITURE_OPTION.getFurnitureName()))
+                .direction(KOK_01.getDirection())
+                .reviewInfo(reviewInfo)
+                .checkedOuterOptions(options_outer)
+                .checkedInnerOptions(options_inner)
+                .checkedContractOptions(options_contract)
+                .build();
     }
 }
 
