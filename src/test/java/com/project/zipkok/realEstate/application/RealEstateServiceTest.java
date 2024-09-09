@@ -15,6 +15,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.DataAccessException;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
@@ -110,15 +111,29 @@ public class RealEstateServiceTest {
         assertEquals(10L, response.getRealEstateId());
     }
 
-    /**
-     * DB에서 발생하는 예외에 대해 전반적 예외 핸들링 논의 후 추가 예정
-     */
     @Test
     @DisplayName("매물_직접_등록_실패_테스트")
     void registerRealEstateTest2() {
         //given
-        //when
+        PostRealEstateRequest postRealEstateRequest = PostRealEstateRequest.builder()
+                .realEstateName("자취방1")
+                .transactionType(TransactionType.MONTHLY.name())
+                .realEstateType(RealEstateType.ONEROOM.name())
+                .deposit(10000000L)
+                .price(400000L)
+                .administrativeFee(10000)
+                .address("서울특별시 광진구 자양로 23나길 24")
+                .detailAddress("202호")
+                .latitude(1.0)
+                .longitude(1.0)
+                .pyeongsu(12)
+                .floorNum(2)
+                .build();
+
+        given(realEstateRepository.save(any())).willThrow(new DataAccessException("DB error") { });
+
         //then
+        assertThrows(DataAccessException.class, () -> realEstateService.registerRealEstate(JwtUserDetails.from(USER_USER), postRealEstateRequest));
     }
 
     @Test
@@ -176,11 +191,35 @@ public class RealEstateServiceTest {
     }
 
     /**
-     * 추후 비로그인 유저가 제공한 필터 정보가 충분하지 않은 경우에 대한 예외 처리 추가 필요
+     * min, max 값을 모두 입력하지 않았더라도 성공적으로 응답해야함
      */
     @Test
-    @DisplayName("비로그인_유저가_필터_정보를_입력하지_않은_경우_테스트")
+    @DisplayName("비로그인_유저가_필터_정보를_충분히_입력하지_않은_경우_테스트")
     void getRealEstateTest3() {
+
+        //given
+        GetRealEstateOnMapRequest request = GetRealEstateOnMapRequest.builder()
+                .southWestLat(0.0)
+                .southWestLon(0.0)
+                .northEastLat(10.0)
+                .northEastLon(10.0)
+                .transactionType(TransactionType.MONTHLY)
+                .realEstateType(RealEstateType.ONEROOM)
+                .depositMin(null)
+                .depositMax(null)
+                .priceMin(null)
+                .priceMax(null)
+                .build();
+
+        given(realEstateRepository.findByLatitudeBetweenAndLongitudeBetween(anyDouble(), anyDouble(), anyDouble(), anyDouble()))
+                .willReturn(List.of(MONTHLY_ONEROOM_01, MONTHLY_ONEROOM_02, MONTHLY_APARTMENT_01, YEARLY_ONEROOM_01));
+
+        //when
+        GetTempRealEstateResponse response = (GetTempRealEstateResponse) realEstateService.getRealEstate(JwtUserDetails.makeGuestJwtDetails(), request);
+
+        //then
+        //보증금, 가격 정보가 요청에 포함되지 않았음으로 월세, 원룸에 해당하는 모든 매물을 응답해야 함
+        assertEquals(2, response.getRealEstateInfoList().size());
 
     }
 
