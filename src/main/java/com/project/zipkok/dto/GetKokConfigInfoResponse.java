@@ -10,8 +10,8 @@ import java.util.List;
 @Getter
 @Builder
 public class GetKokConfigInfoResponse {
-    private List<String> hilights;
-    private List<String> checkedHilights;
+    private List<String> highlights;
+    private List<String> checkedHighlights;
     private List<String> furnitureOptions;
     private List<String> checkedFurnitureOptions;
     private ReviewInfo reviewInfo;

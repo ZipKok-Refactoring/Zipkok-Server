@@ -162,8 +162,8 @@ public class KokService {
 
 
         GetKokConfigInfoResponse response = GetKokConfigInfoResponse.builder()
-                .hilights(hilightsResponse.stream().toList())
-                .checkedHilights(checkedHilightsResponse.stream().toList())
+                .highlights(hilightsResponse.stream().toList())
+                .checkedHighlights(checkedHilightsResponse.stream().toList())
                 .furnitureOptions(furnitureOptionsResponse.stream().toList())
                 .checkedFurnitureOptions(checkedFurinirureOptionsResponse.stream().toList())
                 .reviewInfo(reviewInfoResponse)
