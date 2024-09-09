@@ -21,7 +21,7 @@ public interface RealEstateRepository extends JpaRepository<RealEstate, Long> {
 
     @Query(value = "SELECT r " +
             "FROM RealEstate r " +
-            "JOIN FETCH r.realEstateImages " +
+            "LEFT JOIN FETCH r.realEstateImages " +
             "WHERE r.latitude BETWEEN :minLat AND :maxLat " +
             "AND r.longitude BETWEEN :minLon AND :maxLon " +
             "AND (r.latitude <> :latitude OR r.longitude <> :longitude) " +
