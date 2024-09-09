@@ -112,11 +112,13 @@ public class RealEstateService {
             );
 
             if(userTransactionType != null && userRealEstateType != null){
+                
                 realEstateList = realEstateList
                                     .stream()
                                     .filter(result -> result.getTransactionType().equals(userTransactionType) && result.getRealEstateType().equals(userRealEstateType))
                                     .filter(result -> filterPriceConfig(result, getTempRealEstateResponse.getFilter(), false))
                                     .toList();
+
             }
 
 
@@ -231,13 +233,18 @@ public class RealEstateService {
         else{
             GetTempRealEstateResponse.Filter loginFilter = (GetTempRealEstateResponse.Filter) filter;
 
+            long depositMin = loginFilter.getDepositMin() != null ? loginFilter.getDepositMin() : 0L;
+            long depositMax = loginFilter.getDepositMax() != null ? loginFilter.getDepositMax() : Long.MAX_VALUE;
+            long priceMin = loginFilter.getPriceMin() != null ? loginFilter.getPriceMin() : 0L;
+            long priceMax = loginFilter.getPriceMax() != null ? loginFilter.getPriceMax() : Long.MAX_VALUE;
+
             if(transactionType.equals("월세")){
-                if(deposit < loginFilter.getDepositMin() || deposit > loginFilter.getDepositMax()){ return false; }
-                if(price < loginFilter.getPriceMin() || price > loginFilter.getPriceMax()) { return false; }
+                if(deposit < depositMin || deposit > depositMax){ return false; }
+                if(price < priceMin || price > priceMax) { return false; }
             }else if(transactionType.equals("전세")) {
-                if(deposit < loginFilter.getDepositMin() || deposit > loginFilter.getDepositMax()){ return false; }
+                if(deposit < depositMin || deposit > depositMax){ return false; }
             }else if(transactionType.equals("매매")){
-                if(price < loginFilter.getPriceMin() || price > loginFilter.getPriceMax()) { return false; }
+                if(price < priceMin || price > priceMax) { return false; }
             }
 
         }
@@ -246,7 +253,7 @@ public class RealEstateService {
         return true;
     }
 
-    public List<RealEstate> findNearbyRealEstates(double centerLat, double centerLon, int minResults) {
+    private List<RealEstate> findNearbyRealEstates(double centerLat, double centerLon, int minResults) {
         double radiusInKm = 0.5;
         List<RealEstate> nearbyRealEstates;
 
