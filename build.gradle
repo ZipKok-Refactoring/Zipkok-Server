@@ -63,6 +63,12 @@ dependencies {
 	//selenium
 	implementation 'org.seleniumhq.selenium:selenium-java:4.0.0'
 
+	//테스트용 인메모리 데이터베이스
+	testImplementation 'com.h2database:h2'
+
+	//테스트용 롬복 의존성
+	testImplementation 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 }
 
 tasks.named('test') {
