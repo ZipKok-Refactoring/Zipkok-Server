@@ -23,13 +23,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.ArrayList;
-
 import static com.project.zipkok.kok.controller.KokControllerResponseMatcher.*;
-import static com.project.zipkok.kok.controller.MakeTestResponse.*;
+import static com.project.zipkok.kok.controller.MakeTestKokControllerResponse.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.multipart;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(
@@ -182,8 +179,8 @@ public class KokControllerTest {
     @Test
     void 새_콕_생성() throws Exception {
         //given
-        PostOrPutKokResponse response = makeTestResponsePostOrPutKokResponse();
-        MockMultipartFile request = makeTestRequestPostOrPutKokRequest();
+        PostOrPutKokResponse response = makeTestPostOrPutKokResponse();
+        MockMultipartFile request = makeTestPostOrPutKokRequest();
 
         given(kokService.createOrUpdateKok(any(JwtUserDetails.class), any(), any())).willReturn(response);
 
@@ -203,7 +200,7 @@ public class KokControllerTest {
     @Test
     void 콕_수정() throws Exception {
         //given
-        MockMultipartFile request = makeTestRequestPostOrPutKokRequest();
+        MockMultipartFile request = makeTestPostOrPutKokRequest();
 
         given(kokService.createOrUpdateKok(any(JwtUserDetails.class), any(), any())).willReturn(null);
 

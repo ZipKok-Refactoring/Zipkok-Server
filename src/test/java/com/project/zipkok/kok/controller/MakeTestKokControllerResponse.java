@@ -1,54 +1,39 @@
 package com.project.zipkok.kok.controller;
 
-import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.dto.*;
-import com.project.zipkok.util.jwt.JwtUserDetails;
+import com.project.zipkok.model.Kok;
+import com.project.zipkok.model.KokImage;
+import com.project.zipkok.model.RealEstate;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-@Component
-public class MakeTestResponse {
+import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
 
-    private JwtUserDetails makeTestJwtUserDetails(){
-        return JwtUserDetails.builder()
-                .userId(1L)
-                .role(Role.USER)
-                .build();
-    }
+public class MakeTestKokControllerResponse {
+
+    public static final Kok kok = KOK_01;
 
     public static GetKokResponse makeTestGetKokResponse(){
         List<GetKokResponse.Koks> koks = new ArrayList<>();
 
+        RealEstate realEstate = kok.getRealEstate();
+
         koks.add(GetKokResponse.Koks.builder()
-                .kokId(1L)
-                .realEstateId(1L)
-                .imageUrl("https//test.com")
-                .address("test/test")
-                .detailAddress("101")
-                .estateAgent("test부동산")
-                .transactionType("월세")
-                .realEstateType("원룸")
-                .deposit(5000000L)
-                .price(500000L)
+                .kokId(kok.getKokId())
+                .realEstateId(realEstate.getRealEstateId())
+                .imageUrl(kok.getKokImages().get(0).getImageUrl())
+                .address(realEstate.getAddress())
+                .detailAddress(realEstate.getDetailAddress())
+                .estateAgent(realEstate.getAgent())
+                .transactionType(realEstate.getTransactionType().getDescription())
+                .realEstateType(realEstate.getRealEstateType().getDescription())
+                .deposit(realEstate.getDeposit())
+                .price(realEstate.getPrice())
                 .isZimmed(true)
-                .build()
-        );
-        koks.add(GetKokResponse.Koks.builder()
-                .kokId(2L)
-                .realEstateId(2L)
-                .imageUrl("https//test2.com")
-                .address("test2/test2")
-                .detailAddress("102")
-                .estateAgent("test2부동산")
-                .transactionType("전세")
-                .realEstateType("투룸")
-                .deposit(10000000L)
-                .isZimmed(false)
                 .build()
         );
 
@@ -58,32 +43,31 @@ public class MakeTestResponse {
     }
 
     public static GetKokDetailResponse makeTestGetkokDetailResponse(){
-        List<String> imageUrls = new ArrayList<>();
-        imageUrls.add("https//test.com");
-        imageUrls.add("https//test2.com");
+
+        RealEstate realEstate = kok.getRealEstate();
 
         return GetKokDetailResponse.builder()
-                .kokId(1L)
+                .kokId(kok.getKokId())
                 .imageInfo(
                         GetKokDetailResponse.ImageInfo.builder()
-                                .imageNumber(2)
-                                .imageUrls(imageUrls)
+                                .imageNumber(1)
+                                .imageUrls(kok.getKokImages().stream().map(KokImage::getImageUrl).toList())
                                 .build()
                 )
-                .realEstateId(1L)
-                .address("test/test")
-                .detailAddress("101")
-                .transactionType("월세")
-                .deposit(100000L)
-                .price(500L)
-                .detail("테스트입니다.")
-                .areaSize(1.1f)
-                .pyeongsu(5)
-                .realEstateType("원룸")
-                .floorNum(2)
-                .administrativeFee(5000)
-                .latitude(127.1)
-                .longitude(127.1)
+                .realEstateId(realEstate.getRealEstateId())
+                .address(realEstate.getAddress())
+                .detailAddress(realEstate.getDetailAddress())
+                .transactionType(realEstate.getTransactionType().getDescription())
+                .deposit(realEstate.getDeposit())
+                .price(realEstate.getPrice())
+                .detail(realEstate.getDetail())
+                .areaSize(realEstate.getAreaSize())
+                .pyeongsu((int)realEstate.getPyeongsu())
+                .realEstateType(realEstate.getRealEstateType().getDescription())
+                .floorNum(realEstate.getFloorNum())
+                .administrativeFee(realEstate.getAdministrativeFee())
+                .latitude(realEstate.getLatitude())
+                .longitude(realEstate.getLongitude())
                 .build();
     }
 
@@ -201,13 +185,13 @@ public class MakeTestResponse {
                 .build();
     }
 
-    public static PostOrPutKokResponse makeTestResponsePostOrPutKokResponse(){
+    public static PostOrPutKokResponse makeTestPostOrPutKokResponse(){
         return PostOrPutKokResponse.builder()
                 .kokId(1L)
                 .build();
     }
 
-    public static MockMultipartFile makeTestRequestPostOrPutKokRequest(){
+    public static MockMultipartFile makeTestPostOrPutKokRequest(){
         return new MockMultipartFile("file", "test.txt", "text/plain", "test".getBytes());
     }
 }

@@ -49,4 +49,13 @@ public class DesireResidence {
         this.longitude = putUpdateMyInfoRequest.getLongitude();
     }
 
+    @Builder
+    public DesireResidence(String address, Double latitude, Double longitude) {
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.status = "active";
+    }
+
+
 }

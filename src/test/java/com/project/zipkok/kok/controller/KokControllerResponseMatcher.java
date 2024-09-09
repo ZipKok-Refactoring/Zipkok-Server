@@ -10,7 +10,7 @@ public class KokControllerResponseMatcher {
             MockMvcResultMatchers.jsonPath("$.code").value("7001").match(result);
             MockMvcResultMatchers.jsonPath("$.message").value("콕리스트 조회 성공").match(result);
             MockMvcResultMatchers.jsonPath("$.result.koks").isArray().match(result);
-            MockMvcResultMatchers.jsonPath("$.result.koks", Matchers.hasSize(2)).match(result);
+            MockMvcResultMatchers.jsonPath("$.result.koks", Matchers.hasSize(1)).match(result);
         };
     }
 
@@ -20,17 +20,16 @@ public class KokControllerResponseMatcher {
             MockMvcResultMatchers.jsonPath("$.message", Matchers.equalTo("콕 세부조회 성공")).match(result);
             MockMvcResultMatchers.jsonPath("$.result.kokId").exists().match(result);
             MockMvcResultMatchers.jsonPath("$.result.imageInfo").exists().match(result);
-            MockMvcResultMatchers.jsonPath("$.result.imageInfo.imageNumber", Matchers.equalTo(2)).match(result);
+            MockMvcResultMatchers.jsonPath("$.result.imageInfo.imageNumber", Matchers.equalTo(1)).match(result);
             MockMvcResultMatchers.jsonPath("$.result.imageInfo.imageUrls").isArray().match(result);
-            MockMvcResultMatchers.jsonPath("$.result.imageInfo.imageUrls[0]", Matchers.equalTo("https//test.com")).match(result);
-            MockMvcResultMatchers.jsonPath("$.result.imageInfo.imageUrls[1]", Matchers.equalTo("https//test2.com")).match(result);
+            MockMvcResultMatchers.jsonPath("$.result.imageInfo.imageUrls[0]", Matchers.equalTo("https://test.com")).match(result);
             MockMvcResultMatchers.jsonPath("$.result.realEstateId").exists().match(result);
             MockMvcResultMatchers.jsonPath("$.result.address", Matchers.equalTo("test/test")).match(result);
             MockMvcResultMatchers.jsonPath("$.result.detailAddress", Matchers.equalTo("101")).match(result);
             MockMvcResultMatchers.jsonPath("$.result.transactionType", Matchers.equalTo("월세")).match(result);
             MockMvcResultMatchers.jsonPath("$.result.deposit", Matchers.equalTo(100000)).match(result);
             MockMvcResultMatchers.jsonPath("$.result.price", Matchers.equalTo(500)).match(result);
-            MockMvcResultMatchers.jsonPath("$.result.detail", Matchers.equalTo("테스트입니다.")).match(result);
+            MockMvcResultMatchers.jsonPath("$.result.detail", Matchers.equalTo("테스트입니다")).match(result);
             MockMvcResultMatchers.jsonPath("$.result.areaSize", Matchers.equalTo(1.1)).match(result);
             MockMvcResultMatchers.jsonPath("$.result.pyeongsu", Matchers.equalTo(5)).match(result);
             MockMvcResultMatchers.jsonPath("$.result.realEstateType", Matchers.equalTo("원룸")).match(result);
