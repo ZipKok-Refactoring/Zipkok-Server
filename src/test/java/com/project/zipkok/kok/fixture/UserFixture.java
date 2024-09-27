@@ -6,14 +6,13 @@ import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.model.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import java.util.List;
 import java.util.Set;
 
 import static com.project.zipkok.common.enums.RealEstateType.ONEROOM;
 import static com.project.zipkok.common.enums.TransactionType.MONTHLY;
 import static com.project.zipkok.kok.fixture.CheckedFixture.*;
 import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
-import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALSTATE;
+import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALESTATE;
 
 public class UserFixture {
 
@@ -38,8 +37,8 @@ public class UserFixture {
             .koks(Set.of(KOK_01))
             .build();
 
-    public static final Zim DUMMY_ZIM = new Zim(DUMMY_REALSTATE, DUMMY_USER);
-    public static final Kok DUMMY_KOK = new Kok(DUMMY_REALSTATE,"This is Dummy Review", DUMMY_USER);
+    public static final Zim DUMMY_ZIM = new Zim(DUMMY_REALESTATE, DUMMY_USER);
+    public static final Kok DUMMY_KOK = new Kok(DUMMY_REALESTATE,"This is Dummy Review", DUMMY_USER);
 
     static {
         ReflectionTestUtils.setField(DUMMY_DESIRE_RESIDENCE, "desireResidenceId", 1L);

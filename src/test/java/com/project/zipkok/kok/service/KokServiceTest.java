@@ -21,7 +21,7 @@ import java.util.Optional;
 import static com.project.zipkok.common.enums.Role.GUEST;
 import static com.project.zipkok.kok.fixture.CheckedFixture.*;
 import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
-import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALSTATE;
+import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALESTATE;
 import static com.project.zipkok.kok.fixture.StarFixture.DUMMY_STAR;
 import static com.project.zipkok.kok.fixture.UserFixture.DUMMY_USER;
 import static com.project.zipkok.kok.response.MakeTestKokResponse.makePostOrPutKokRequest;
@@ -173,7 +173,7 @@ public class KokServiceTest {
     private void givenForCreateOrUpdateKok(){
         given(kokRepository.save(any(Kok.class))).willReturn(KOK_01);
         given(userRepository.findByUserIdWithZimAndKok(DUMMY_USER.getUserId())).willReturn(Optional.of(DUMMY_USER));
-        given(realEstateRepository.findById(DUMMY_REALSTATE.getRealEstateId())).willReturn(Optional.of(DUMMY_REALSTATE));
+        given(realEstateRepository.findById(DUMMY_REALESTATE.getRealEstateId())).willReturn(Optional.of(DUMMY_REALESTATE));
         given(kokRepository.findById(KOK_01.getKokId())).willReturn(Optional.of(KOK_01));
         given(starRepository.save(any(Star.class))).willReturn(DUMMY_STAR);
         given(furnitureOptionRepository.findAll()).willReturn(List.of(DUMMY_FURNITURE_OPTION));

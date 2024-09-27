@@ -15,7 +15,7 @@ import java.util.List;
 import static com.project.zipkok.kok.fixture.CheckedFixture.*;
 import static com.project.zipkok.kok.fixture.CheckedFixture.DUMMY_FURNITURE_OPTION;
 import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
-import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALSTATE;
+import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALESTATE;
 import static com.project.zipkok.kok.fixture.StarFixture.DUMMY_STAR;
 
 public class MakeTestKokResponse {
@@ -236,7 +236,7 @@ public class MakeTestKokResponse {
 
         return PostOrPutKokRequest.builder()
                 .kokId(KOK_01.getKokId())
-                .realEstateId(DUMMY_REALSTATE.getRealEstateId())
+                .realEstateId(DUMMY_REALESTATE.getRealEstateId())
                 .checkedHighlights(List.of(DUMMY_HIGHLIGHT.getTitle()))
                 .checkedFurnitureOptions(List.of(DUMMY_FURNITURE_OPTION.getFurnitureName()))
                 .direction(KOK_01.getDirection())
