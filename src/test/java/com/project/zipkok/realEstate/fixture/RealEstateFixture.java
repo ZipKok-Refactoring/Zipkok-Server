@@ -1,8 +1,6 @@
 package com.project.zipkok.realEstate.fixture;
 
-import com.project.zipkok.common.enums.Gender;
-import com.project.zipkok.common.enums.OAuthProvider;
-import com.project.zipkok.common.enums.Role;
+import com.project.zipkok.common.enums.*;
 import com.project.zipkok.model.*;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -14,6 +12,75 @@ import static com.project.zipkok.common.enums.RealEstateType.ONEROOM;
 import static com.project.zipkok.common.enums.TransactionType.*;
 
 public class RealEstateFixture {
+
+    public static RealEstate makeTestRealEstate(Long id, TransactionType transactionType, RealEstateType realEstateType, Long deposit, Long price) {
+
+        RealEstate realEstate = RealEstate.builder()
+                .address("ADDRESS")
+                .transactionType(transactionType)
+                .realEstateType(realEstateType)
+                .deposit(deposit)
+                .price(price)
+                .administrativeFee(120000)
+                .latitude(1.0)
+                .longitude(1.0)
+                .agent("AGENT")
+                .imageUrl("https://testThumbnailImage.com")
+                .build();
+
+        ReflectionTestUtils.setField(realEstate, "realEstateId", id);
+
+        return realEstate;
+    }
+
+    public static RealEstate makeTestRealEstateWithLatLon(Long id, TransactionType transactionType, RealEstateType realEstateType, Long deposit, Long price, Double latitude, Double longitude) {
+        RealEstate realEstate = RealEstate.builder()
+                .address("ADDRESS")
+                .transactionType(transactionType)
+                .realEstateType(realEstateType)
+                .deposit(deposit)
+                .price(price)
+                .administrativeFee(120000)
+                .latitude(latitude)
+                .longitude(longitude)
+                .agent("AGENT")
+                .imageUrl("https://testImage.com")
+                .build();
+
+        ReflectionTestUtils.setField(realEstate, "realEstateId", id);
+
+        return realEstate;
+    }
+
+    public static RealEstate makeTestRealEstateWithRealEstateImage(Long id, TransactionType transactionType, RealEstateType realEstateType, Long deposit, Long price) {
+
+        RealEstate realEstate = RealEstate.builder()
+                .address("ADDRESS")
+                .transactionType(transactionType)
+                .realEstateType(realEstateType)
+                .deposit(deposit)
+                .price(price)
+                .administrativeFee(120000)
+                .latitude(1.0)
+                .longitude(1.0)
+                .agent("AGENT")
+                .imageUrl("https://testThumbnailImage.com")
+                .build();
+
+        RealEstateImage realEstateImage = new RealEstateImage("https://testRealEstateImage.com", realEstate);
+
+        ReflectionTestUtils.setField(realEstate, "realEstateId", id);
+        ReflectionTestUtils.setField(realEstateImage, "realEstateImgId", 1L);
+        ReflectionTestUtils.setField(realEstate, "realEstateImages", List.of(realEstateImage));
+
+        return realEstate;
+    }
+
+    public static RealEstate makeDummyRealEstate(Long id) {
+        RealEstate realEstate = RealEstate.builder().build();
+        ReflectionTestUtils.setField(realEstate, "realEstateId", id);
+        return realEstate;
+    }
 
     public static final RealEstate MONTHLY_ONEROOM_01 = RealEstate.builder()
             .address("MONTHLY_ONEROOM_01_ADDRESS")
@@ -32,8 +99,8 @@ public class RealEstateFixture {
             .address("MONTHLY_ONEROOM_02_ADDRESS")
             .transactionType(MONTHLY)
             .realEstateType(ONEROOM)
-            .deposit(1000L)
-            .price(50L)
+            .deposit(10000000L)
+            .price(500000L)
             .administrativeFee(20000)
             .latitude(1.1)
             .longitude(1.1)
@@ -41,94 +108,6 @@ public class RealEstateFixture {
             .imageUrl("https://MONTHLY_ONEROOM_02image.com")
             .build();
 
-    public static final RealEstate MONTHLY_APARTMENT_01 = RealEstate.builder()
-            .address("MONTHLY_APARTMENT_01_ADDRESS")
-            .transactionType(MONTHLY)
-            .realEstateType(APARTMENT)
-            .deposit(1000L)
-            .price(50L)
-            .administrativeFee(20000)
-            .latitude(1.2)
-            .longitude(1.2)
-            .agent("MONTHLY_APARTMENT_01_AGENT")
-            .imageUrl("https://MONTHLY_APARTMENT_01image.com")
-            .build();
-
-    public static final RealEstate YEARLY_ONEROOM_01 = RealEstate.builder()
-            .address("YEARLY_ONEROOM_01_ADDRESS")
-            .transactionType(YEARLY)
-            .realEstateType(ONEROOM)
-            .deposit(20000L)
-            .price(0L)
-            .administrativeFee(50000)
-            .latitude(1.3)
-            .longitude(1.3)
-            .agent("YEARLY_ONEROOM_01_AGENT")
-            .imageUrl("https://YEARLY_ONEROOM_01image.com")
-            .build();
-
-    public static final RealEstate YEARLY_ONEROOM_02 = RealEstate.builder()
-            .address("YEARLY_ONEROOM_02_ADDRESS")
-            .transactionType(YEARLY)
-            .realEstateType(ONEROOM)
-            .deposit(30000L)
-            .price(0L)
-            .administrativeFee(20000)
-            .latitude(1.4)
-            .longitude(1.4)
-            .agent("YEARLY_ONEROOM_02_AGENT")
-            .imageUrl("https://YEARLY_ONEROOM_02image.com")
-            .build();
-
-    public static final RealEstate YEARLY_APARTMENT_01 = RealEstate.builder()
-            .address("YEARLY_APARTMENT_01_ADDRESS")
-            .transactionType(YEARLY)
-            .realEstateType(APARTMENT)
-            .deposit(40000L)
-            .price(0L)
-            .administrativeFee(100000)
-            .latitude(1.5)
-            .longitude(1.5)
-            .agent("YEARLY_APARTMENT_01_AGENT")
-            .imageUrl("https://YEARLY_APARTMENT_01image.com")
-            .build();
-
-    public static final RealEstate YEARLY_APARTMENT_02 = RealEstate.builder()
-            .address("YEARLY_APARTMENT_02_ADDRESS")
-            .transactionType(YEARLY)
-            .realEstateType(APARTMENT)
-            .deposit(70000L)
-            .price(0L)
-            .administrativeFee(120000)
-            .latitude(1.6)
-            .longitude(1.6)
-            .agent("YEARLY_APARTMENT_02_AGENT")
-            .imageUrl("https://YEARLY_APARTMENT_02image.com")
-            .build();
-
-    public static final RealEstate PURCHASE_ONEROOM_01 = RealEstate.builder()
-            .address("PURCHASE_ONEROOM_01_ADDRESS")
-            .transactionType(PURCHASE)
-            .realEstateType(ONEROOM)
-            .deposit(0L)
-            .price(45000L)
-            .latitude(1.7)
-            .longitude(1.7)
-            .agent("PURCHASE_ONEROOM_01_AGENT")
-            .imageUrl("https://PURCHASE_ONEROOM_01image.com")
-            .build();
-
-    public static final RealEstate PURCHASE_APARTMENT_02 = RealEstate.builder()
-            .address("PURCHASE_APARTMENT_02_ADDRESS")
-            .transactionType(PURCHASE)
-            .realEstateType(APARTMENT)
-            .deposit(0L)
-            .price(80000L)
-            .latitude(1.8)
-            .longitude(1.8)
-            .agent("PURCHASE_APARTMENT_02_AGENT")
-            .imageUrl("https://PURCHASE_APARTMENT_02image.com")
-            .build();
 
     public static final RealEstateImage DUMMY_REAL_ESTATE_IMAGE = new RealEstateImage("https://DUMMY_REAL_ESTATE_IMAGE.com", MONTHLY_ONEROOM_01);
 
@@ -155,13 +134,6 @@ public class RealEstateFixture {
     static {
         ReflectionTestUtils.setField(MONTHLY_ONEROOM_01, "realEstateId", 1L);
         ReflectionTestUtils.setField(MONTHLY_ONEROOM_02, "realEstateId", 2L);
-        ReflectionTestUtils.setField(MONTHLY_APARTMENT_01, "realEstateId", 3L);
-        ReflectionTestUtils.setField(YEARLY_ONEROOM_01, "realEstateId", 4L);
-        ReflectionTestUtils.setField(YEARLY_ONEROOM_02, "realEstateId", 5L);
-        ReflectionTestUtils.setField(YEARLY_APARTMENT_01, "realEstateId", 6L);
-        ReflectionTestUtils.setField(YEARLY_APARTMENT_02, "realEstateId", 7L);
-        ReflectionTestUtils.setField(PURCHASE_ONEROOM_01, "realEstateId", 8L);
-        ReflectionTestUtils.setField(PURCHASE_APARTMENT_02, "realEstateId", 9L);
 
         ReflectionTestUtils.setField(DUMMY_REAL_ESTATE_IMAGE, "realEstateImgId", 1L);
         ReflectionTestUtils.setField(MONTHLY_ONEROOM_01, "realEstateImages", List.of(DUMMY_REAL_ESTATE_IMAGE));

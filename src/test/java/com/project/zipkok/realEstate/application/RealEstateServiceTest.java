@@ -5,10 +5,12 @@ import com.project.zipkok.common.enums.TransactionType;
 import com.project.zipkok.common.exception.RealEstateException;
 import com.project.zipkok.dto.*;
 import com.project.zipkok.model.RealEstate;
+import com.project.zipkok.realEstate.fixture.RealEstateFixture;
 import com.project.zipkok.repository.RealEstateRepository;
 import com.project.zipkok.repository.UserRepository;
 import com.project.zipkok.service.RealEstateService;
 import com.project.zipkok.util.jwt.JwtUserDetails;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyDouble;
 import static org.mockito.BDDMockito.given;
 
+@Slf4j
 @ExtendWith(MockitoExtension.class)
 public class RealEstateServiceTest {
 
@@ -41,30 +44,39 @@ public class RealEstateServiceTest {
     private UserRepository userRepository;
 
     /**
-     * 추후 getRealEstateInfo 내의 getAllImageUrlsFromRealEstate, findNearbyRealEstates 메서드에 대한 테스트 분리 필요
+     * getRealEstateInfo 내에서 사용되는 findNearbyRealEstates() 메서드가 근처 매물 5개를 채우지 못할 경우에도 정상 응답할 수 있도록 수정 필요
      */
     @Test
     @DisplayName("매물_상세정보_응답_성공_테스트")
     void getRealEstateInfoTest() {
         // given
-        given(realEstateRepository.findById(MONTHLY_ONEROOM_01.getRealEstateId().longValue())).willReturn(Optional.of(MONTHLY_ONEROOM_01));
-        given(userRepository.findByUserIdWithZimAndKok(USER_USER.getUserId())).willReturn(Optional.of(USER_USER));
+        RealEstate resposeRealEstate = RealEstateFixture.makeTestRealEstateWithRealEstateImage(1L, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000L, 48L);
+        RealEstate neighborRealEstate1 = RealEstateFixture.makeDummyRealEstate(2L);
+        RealEstate neighborRealEstate2 = RealEstateFixture.makeDummyRealEstate(3L);
+        RealEstate neighborRealEstate3 = RealEstateFixture.makeDummyRealEstate(4L);
+        RealEstate neighborRealEstate4 = RealEstateFixture.makeDummyRealEstate(4L);
+        RealEstate neighborRealEstate5 = RealEstateFixture.makeDummyRealEstate(5L);
+
+        given(realEstateRepository.findById(resposeRealEstate.getRealEstateId().longValue()))
+                .willReturn(Optional.of(resposeRealEstate));
+        given(userRepository.findByUserIdWithZimAndKok(USER_USER.getUserId()))
+                .willReturn(Optional.of(USER_USER));
         given(realEstateRepository.findTop5ByLatitudeBetweenAndLongitudeBetween(anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), anyDouble()))
-                .willReturn(List.of(MONTHLY_ONEROOM_01, MONTHLY_ONEROOM_02, MONTHLY_APARTMENT_01, YEARLY_ONEROOM_01, MONTHLY_ONEROOM_02));
+                .willReturn(List.of(neighborRealEstate1, neighborRealEstate2, neighborRealEstate3, neighborRealEstate4, neighborRealEstate5));
 
         // when
-        GetRealEstateResponse response = realEstateService.getRealEstateInfo(JwtUserDetails.from(USER_USER), MONTHLY_ONEROOM_01.getRealEstateId());
+        GetRealEstateResponse response = realEstateService.getRealEstateInfo(JwtUserDetails.from(USER_USER), resposeRealEstate.getRealEstateId());
 
         // then
-        assertEquals(MONTHLY_ONEROOM_01.getRealEstateId(), response.getRealEstateId());
-        assertEquals(MONTHLY_ONEROOM_01.getAddress(), response.getAddress());
-        assertEquals(MONTHLY_ONEROOM_01.getTransactionType().name(), response.getTransactionType());
-        assertEquals(MONTHLY_ONEROOM_01.getRealEstateType().name(), response.getRealEstateType());
-        assertEquals(MONTHLY_ONEROOM_01.getDeposit(), response.getDeposit());
-        assertEquals(MONTHLY_ONEROOM_01.getPrice(), response.getPrice());
-        assertEquals(MONTHLY_ONEROOM_01.getAdministrativeFee(), response.getAdministrativeFee());
-        assertEquals(MONTHLY_ONEROOM_01.getLatitude(), response.getLatitude());
-        assertEquals(MONTHLY_ONEROOM_01.getLongitude(), response.getLongitude());
+        assertEquals(resposeRealEstate.getRealEstateId(), response.getRealEstateId());
+        assertEquals(resposeRealEstate.getAddress(), response.getAddress());
+        assertEquals(resposeRealEstate.getTransactionType().name(), response.getTransactionType());
+        assertEquals(resposeRealEstate.getRealEstateType().name(), response.getRealEstateType());
+        assertEquals(resposeRealEstate.getDeposit(), response.getDeposit());
+        assertEquals(resposeRealEstate.getPrice(), response.getPrice());
+        assertEquals(resposeRealEstate.getAdministrativeFee(), response.getAdministrativeFee());
+        assertEquals(resposeRealEstate.getLatitude(), response.getLatitude());
+        assertEquals(resposeRealEstate.getLongitude(), response.getLongitude());
 
         assertEquals(2, response.getImageInfo().getImageNumber());
         assertEquals(5, response.getNeighborRealEstates().size());
@@ -74,10 +86,12 @@ public class RealEstateServiceTest {
     @DisplayName("매물_상세정보_매물이_없는 경우_테스트")
     void getRealEstateInfoTest2() {
         //given
-        given(realEstateRepository.findById(MONTHLY_ONEROOM_01.getRealEstateId().longValue())).willReturn(Optional.empty());
+        RealEstate notExistRealEstate = RealEstateFixture.makeDummyRealEstate(1L);
+
+        given(realEstateRepository.findById(notExistRealEstate.getRealEstateId().longValue())).willReturn(Optional.empty());
 
         //then
-        assertThrows(RealEstateException.class, () -> realEstateService.getRealEstateInfo(JwtUserDetails.from(USER_USER), MONTHLY_ONEROOM_01.getRealEstateId()));
+        assertThrows(RealEstateException.class, () -> realEstateService.getRealEstateInfo(JwtUserDetails.from(USER_USER), notExistRealEstate.getRealEstateId()));
     }
 
     @Test
@@ -140,6 +154,15 @@ public class RealEstateServiceTest {
     @DisplayName("로그인_유저의_지도에_띄울_매물_응답_테스트")
     void getRealEstateTest() {
         //given
+        RealEstate responseRealEstate1 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(1L, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000L, 48L, 1.0, 1.0);
+        RealEstate responseRealEstate2 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(2L, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000000L, 48000L, 1.0, 1.0);
+        RealEstate responseRealEstate3 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(3L, TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 48L, 1.0, 1.0);
+        RealEstate responseRealEstate4 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(4L, TransactionType.YEARLY, RealEstateType.ONEROOM, 1000L, 48L, 1.0, 1.0);
+
         GetRealEstateOnMapRequest request = GetRealEstateOnMapRequest.builder()
                 .southWestLat(0.0)
                 .southWestLon(0.0)
@@ -148,7 +171,7 @@ public class RealEstateServiceTest {
                 .build();
 
         given(realEstateRepository.findByLatitudeBetweenAndLongitudeBetween(anyDouble(), anyDouble(), anyDouble(), anyDouble()))
-                .willReturn(List.of(MONTHLY_ONEROOM_01, MONTHLY_ONEROOM_02, MONTHLY_APARTMENT_01, YEARLY_ONEROOM_01));
+                .willReturn(List.of(responseRealEstate1, responseRealEstate2, responseRealEstate3, responseRealEstate4));
 
         given(userRepository.findByUserIdWithZimAndKok(USER_USER.getUserId())).willReturn(Optional.of(USER_USER));
 
@@ -157,7 +180,7 @@ public class RealEstateServiceTest {
 
         //then
 
-        //회원의 온보딩 설정이 MONTHLY, ONEROOM이고, ONEROOM_02의 가격 범위가 회원의 설정을 벗어나 1개만 응답해야 함
+        //회원의 온보딩 설정이 MONTHLY, ONEROOM이고, responseRealEstate2 가격 범위가 회원의 설정을 벗어나 1개만 응답해야 함
         assertEquals(1, response.getRealEstateInfoList().size());
     }
 
@@ -165,6 +188,16 @@ public class RealEstateServiceTest {
     @DisplayName("비로그인_유저의_지도에_띄울_매물_응답_테스트")
     void getRealEstateTest2() {
         //given
+        RealEstate responseRealEstate1 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(1L, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000L, 48L, 1.0, 1.0);
+        RealEstate responseRealEstate2 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(2L, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000000L, 48000L, 11.0, 11.0);
+        RealEstate responseRealEstate3 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(3L, TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 48L, 1.0, 1.0);
+        RealEstate responseRealEstate4 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(4L, TransactionType.YEARLY, RealEstateType.ONEROOM, 1000L, 48L, 1.0, 1.0);
+
+
         GetRealEstateOnMapRequest request = GetRealEstateOnMapRequest.builder()
                 .southWestLat(0.0)
                 .southWestLon(0.0)
@@ -179,7 +212,7 @@ public class RealEstateServiceTest {
                 .build();
 
         given(realEstateRepository.findByLatitudeBetweenAndLongitudeBetween(anyDouble(), anyDouble(), anyDouble(), anyDouble()))
-                .willReturn(List.of(MONTHLY_ONEROOM_01, MONTHLY_ONEROOM_02, MONTHLY_APARTMENT_01, YEARLY_ONEROOM_01));
+                .willReturn(List.of(responseRealEstate1, responseRealEstate2, responseRealEstate3, responseRealEstate4));
 
         //when
         GetTempRealEstateResponse response = (GetTempRealEstateResponse) realEstateService.getRealEstate(JwtUserDetails.makeGuestJwtDetails(), request);
@@ -198,6 +231,15 @@ public class RealEstateServiceTest {
     void getRealEstateTest3() {
 
         //given
+        RealEstate responseRealEstate1 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(1L, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000L, 48L, 1.0, 1.0);
+        RealEstate responseRealEstate2 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(2L, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000000L, 48000L, 11.0, 11.0);
+        RealEstate responseRealEstate3 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(3L, TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 48L, 1.0, 1.0);
+        RealEstate responseRealEstate4 = RealEstateFixture
+                .makeTestRealEstateWithLatLon(4L, TransactionType.YEARLY, RealEstateType.ONEROOM, 1000L, 48L, 1.0, 1.0);
+
         GetRealEstateOnMapRequest request = GetRealEstateOnMapRequest.builder()
                 .southWestLat(0.0)
                 .southWestLon(0.0)
@@ -212,7 +254,7 @@ public class RealEstateServiceTest {
                 .build();
 
         given(realEstateRepository.findByLatitudeBetweenAndLongitudeBetween(anyDouble(), anyDouble(), anyDouble(), anyDouble()))
-                .willReturn(List.of(MONTHLY_ONEROOM_01, MONTHLY_ONEROOM_02, MONTHLY_APARTMENT_01, YEARLY_ONEROOM_01));
+                .willReturn(List.of(responseRealEstate1, responseRealEstate2, responseRealEstate3, responseRealEstate4));
 
         //when
         GetTempRealEstateResponse response = (GetTempRealEstateResponse) realEstateService.getRealEstate(JwtUserDetails.makeGuestJwtDetails(), request);

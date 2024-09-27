@@ -7,6 +7,8 @@ import com.project.zipkok.common.exception.RealEstateException;
 import com.project.zipkok.controller.RealEstateController;
 import com.project.zipkok.dto.*;
 import com.project.zipkok.global.CommonControllerTest;
+import com.project.zipkok.model.RealEstate;
+import com.project.zipkok.realEstate.fixture.RealEstateFixture;
 import com.project.zipkok.service.RealEstateService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,8 @@ import org.springframework.util.MultiValueMap;
 import java.lang.reflect.Field;
 import java.util.List;
 
+import static com.project.zipkok.common.enums.RealEstateType.ONEROOM;
+import static com.project.zipkok.common.enums.TransactionType.MONTHLY;
 import static com.project.zipkok.common.response.status.BaseExceptionResponseStatus.*;
 import static com.project.zipkok.realEstate.fixture.RealEstateFixture.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,24 +53,18 @@ public class RealEstateControllerTest extends CommonControllerTest {
     @DisplayName("매물_상세정보_테스트_매물_존재")
     void getRealEstateTest() throws Exception {
         //given
-        List<GetRealEstateResponse.RealEstateBriefInfo> realEstateBriefInfoList = List.of(
-                GetRealEstateResponse.RealEstateBriefInfo.from(MONTHLY_ONEROOM_02),
-                GetRealEstateResponse.RealEstateBriefInfo.from(MONTHLY_APARTMENT_01),
-                GetRealEstateResponse.RealEstateBriefInfo.from(YEARLY_ONEROOM_01));
-
-
-        GetRealEstateResponse getRealEstateResponse = GetRealEstateResponse.of(MONTHLY_ONEROOM_01, false, false, null, realEstateBriefInfoList);
-
+        RealEstate responseRealEstate = RealEstateFixture.makeTestRealEstate(1L, MONTHLY, ONEROOM, 1000L, 48L);
+        GetRealEstateResponse getRealEstateResponse = GetRealEstateResponse.of(responseRealEstate, false, false, null, null);
         given(realEstateService.getRealEstateInfo(any(), anyLong())).willReturn(getRealEstateResponse);
 
         //when
-        ResultActions resultActions = mockMvc.perform(get("/realEstate/{realEstateId}", MONTHLY_ONEROOM_01.getRealEstateId()))
+        ResultActions resultActions = mockMvc.perform(get("/realEstate/{realEstateId}", responseRealEstate.getRealEstateId()))
                 .andDo(print());
+
         //then
         resultActions
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.result.realEstateId").value(MONTHLY_ONEROOM_01.getRealEstateId()));
-
+                .andExpect(jsonPath("$.result.realEstateId").value(responseRealEstate.getRealEstateId()));
     }
 
     @Test
@@ -74,9 +72,11 @@ public class RealEstateControllerTest extends CommonControllerTest {
     void getRealEstateTest2() throws Exception {
         //given
         given(realEstateService.getRealEstateInfo(any(), anyLong())).willThrow(new RealEstateException(INVALID_PROPERTY_ID));
+
         //when
         ResultActions resultActions = mockMvc.perform(get("/realEstate/{realEstateId}", 0L))
                 .andDo(print());
+
         //then
         resultActions
                 .andExpect(status().isNotFound())
@@ -90,8 +90,8 @@ public class RealEstateControllerTest extends CommonControllerTest {
         //given
         PostRealEstateRequest postRealEstateRequest = PostRealEstateRequest.builder()
                 .realEstateName("자취방1")
-                .transactionType(TransactionType.MONTHLY.name())
-                .realEstateType(RealEstateType.ONEROOM.name())
+                .transactionType(MONTHLY.name())
+                .realEstateType(ONEROOM.name())
                 .deposit(10000000L)
                 .price(400000L)
                 .administrativeFee(10000)
@@ -161,8 +161,8 @@ public class RealEstateControllerTest extends CommonControllerTest {
                 .southWestLon(0.0)
                 .northEastLat(200.0)
                 .northEastLon(200.0)
-                .transactionType(TransactionType.MONTHLY)
-                .realEstateType(RealEstateType.ONEROOM)
+                .transactionType(MONTHLY)
+                .realEstateType(ONEROOM)
                 .depositMin(0L)
                 .depositMax(1000000000L)
                 .priceMin(0L)
@@ -174,7 +174,7 @@ public class RealEstateControllerTest extends CommonControllerTest {
 
         //when
         ResultActions resultActions = mockMvc.perform(get("/realEstate")
-                .params(convertToQueryParams(request)))
+                        .params(convertToQueryParams(request)))
                 .andDo(print());
 
         //then
@@ -194,8 +194,8 @@ public class RealEstateControllerTest extends CommonControllerTest {
                 .southWestLon(10.0)
                 .northEastLat(5.0)
                 .northEastLon(200.0)
-                .transactionType(TransactionType.MONTHLY)
-                .realEstateType(RealEstateType.ONEROOM)
+                .transactionType(MONTHLY)
+                .realEstateType(ONEROOM)
                 .depositMin(0L)
                 .depositMax(1000000000L)
                 .priceMin(0L)

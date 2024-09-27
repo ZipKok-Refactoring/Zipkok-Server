@@ -1,34 +1,48 @@
 package com.project.zipkok.realEstate.infrastructure;
 
+import com.project.zipkok.common.enums.RealEstateType;
+import com.project.zipkok.common.enums.TransactionType;
 import com.project.zipkok.model.RealEstate;
 import com.project.zipkok.realEstate.fixture.RealEstateFixture;
 import com.project.zipkok.repository.RealEstateRepository;
 import com.project.zipkok.util.GeoLocationUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
 @Slf4j
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ActiveProfiles("test")
+@DataJpaTest
 public class RealEstaeRepositoryTest {
 
     @Autowired
     private RealEstateRepository realEstateRepository;
 
     @Test
-    @DisplayName("RealEstate 저장 후 조회 테스트")
-    @Order(0)
+    @DisplayName("RealEstate 저장 테스트")
     public void saveTest() {
         // given
-        RealEstate newRealEstate = RealEstateFixture.MONTHLY_APARTMENT_01;
+        RealEstate newRealEstate = RealEstate.builder()
+                .address("ADDRESS")
+                .transactionType(TransactionType.MONTHLY)
+                .realEstateType(RealEstateType.ONEROOM)
+                .deposit(1000L)
+                .price(50L)
+                .administrativeFee(120000)
+                .latitude(1.0)
+                .longitude(1.0)
+                .agent("AGENT")
+                .imageUrl("https://testThumbnailImage.com")
+                .build();
 
         // when
         RealEstate savedRealEstate = realEstateRepository.save(newRealEstate);
@@ -37,25 +51,33 @@ public class RealEstaeRepositoryTest {
         assertThat(savedRealEstate).isNotNull();
         assertThat(savedRealEstate.getRealEstateId()).isNotNull();
         assertThat(savedRealEstate.getRealEstateId()).isEqualTo(newRealEstate.getRealEstateId());
-
-        RealEstate findRealEstate = realEstateRepository.findById(savedRealEstate.getRealEstateId()).orElseGet(null);
-
-        assertThat(findRealEstate).isNotNull();
-        assertThat(findRealEstate.getRealEstateId()).isEqualTo(savedRealEstate.getRealEstateId());
     }
 
     @Test
-    @DisplayName("id로 조회 테스트")
+    @DisplayName("저장 후 id로 조회 테스트")
     public void findByIdTest() {
         //given
-        realEstateRepository.save(RealEstateFixture.MONTHLY_ONEROOM_01);
+        RealEstate newRealEstate = RealEstate.builder()
+                .address("ADDRESS")
+                .transactionType(TransactionType.MONTHLY)
+                .realEstateType(RealEstateType.ONEROOM)
+                .deposit(1000L)
+                .price(50L)
+                .administrativeFee(120000)
+                .latitude(1.0)
+                .longitude(1.0)
+                .agent("AGENT")
+                .imageUrl("https://testThumbnailImage.com")
+                .build();
+
+        RealEstate savedRealEstate = realEstateRepository.save(newRealEstate);
 
         //when
-        RealEstate findRealEstate = realEstateRepository.findById(RealEstateFixture.MONTHLY_ONEROOM_01.getRealEstateId().longValue()).orElseGet(null);
+        RealEstate findRealEstate = realEstateRepository.findById(savedRealEstate.getRealEstateId().longValue()).orElseGet(null);
 
         //then
         assertThat(findRealEstate).isNotNull();
-        assertThat(findRealEstate.getRealEstateId()).isEqualTo(RealEstateFixture.MONTHLY_ONEROOM_01.getRealEstateId());
+        assertThat(findRealEstate.getRealEstateId()).isEqualTo(savedRealEstate.getRealEstateId());
     }
 
     @Test
@@ -63,14 +85,24 @@ public class RealEstaeRepositoryTest {
     public void findByLatitudeBetweenAndLongitudeBetweenTest() {
 
         //given
-        realEstateRepository.save(RealEstateFixture.MONTHLY_ONEROOM_01);
-        realEstateRepository.save(RealEstateFixture.MONTHLY_ONEROOM_02);
-        realEstateRepository.save(RealEstateFixture.MONTHLY_APARTMENT_01);
-        realEstateRepository.save(RealEstateFixture.YEARLY_ONEROOM_01);
-        realEstateRepository.save(RealEstateFixture.YEARLY_ONEROOM_02);
-        realEstateRepository.save(RealEstateFixture.YEARLY_APARTMENT_01);
-        realEstateRepository.save(RealEstateFixture.PURCHASE_APARTMENT_02);
-        realEstateRepository.save(RealEstateFixture.PURCHASE_ONEROOM_01);
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000L, 48L, 1.0, 1.0)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000L, 48L, 1.1, 1.1)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 48L, 1.2, 1.2)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.YEARLY, RealEstateType.ONEROOM, 1000L, 48L, 1.3, 1.3)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.YEARLY, RealEstateType.ONEROOM, 1000L, 48L, 1.4, 1.4)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.YEARLY, RealEstateType.APARTMENT, 1000L, 48L, 1.5, 1.5)
+        );
 
         double minLatitude = 0;
         double minLongitude = 0;
@@ -89,20 +121,40 @@ public class RealEstaeRepositoryTest {
     @DisplayName("근처 매물조회 테스트")
     public void findTop5ByLatitudeBetweenAndLongitudeBetweenTest() {
         //given
-        realEstateRepository.save(RealEstateFixture.MONTHLY_ONEROOM_01);
-        realEstateRepository.save(RealEstateFixture.MONTHLY_ONEROOM_02);
-        realEstateRepository.save(RealEstateFixture.MONTHLY_APARTMENT_01);
-        realEstateRepository.save(RealEstateFixture.YEARLY_ONEROOM_01);
-        realEstateRepository.save(RealEstateFixture.YEARLY_ONEROOM_02);
-        realEstateRepository.save(RealEstateFixture.YEARLY_APARTMENT_01);
-        realEstateRepository.save(RealEstateFixture.PURCHASE_APARTMENT_02);
-        realEstateRepository.save(RealEstateFixture.PURCHASE_ONEROOM_01);
-        realEstateRepository.save(RealEstateFixture.YEARLY_APARTMENT_02);
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000L, 48L, 1.0, 1.0)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.MONTHLY, RealEstateType.ONEROOM, 1000L, 48L, 1.1, 1.1)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 48L, 1.2, 1.2)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.YEARLY, RealEstateType.ONEROOM, 1000L, 48L, 1.3, 1.3)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.YEARLY, RealEstateType.ONEROOM, 1000L, 48L, 1.4, 1.4)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.YEARLY, RealEstateType.APARTMENT, 1000L, 48L, 1.5, 1.5)
+        );
+        realEstateRepository.save(
+                RealEstateFixture.makeTestRealEstateWithLatLon(null, TransactionType.YEARLY, RealEstateType.TWOROOM, 1000L, 48L, 1.6, 1.6)
+        );
 
-        double curLatitude = 1.2;
-        double curLongitude = 1.2;
+        double curLatitude = 1.3;
+        double curLongitude = 1.3;
         double radiusInKm = 22;
         double[] bounds = GeoLocationUtils.getSquareBounds(curLatitude, curLongitude, radiusInKm);
+
+        for (int i = 0; i < bounds.length; i++) {
+            log.info("bounds[{}] : {}", i, bounds[i]);
+        }
+
+        realEstateRepository.findAll().stream().forEach(realEstate -> {
+            log.info("realEstate: id: {}, lat: {}, lon: {}, imageSize: {}", realEstate.getRealEstateId(), realEstate.getLatitude(), realEstate.getLongitude(), realEstate.getRealEstateImages().size() );
+        });
 
         //when
         List<RealEstate> result = realEstateRepository.findTop5ByLatitudeBetweenAndLongitudeBetween(curLatitude, curLongitude, bounds[0], bounds[1], bounds[2], bounds[3]);
