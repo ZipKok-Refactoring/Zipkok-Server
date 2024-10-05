@@ -18,7 +18,7 @@ import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
 import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALESTATE;
 import static com.project.zipkok.kok.fixture.StarFixture.DUMMY_STAR;
 
-public class MakeTestKokResponse {
+public class MakeTestKokControllerResponse {
 
     public static final Kok kok = KOK_01;
 

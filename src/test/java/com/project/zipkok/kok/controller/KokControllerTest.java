@@ -24,7 +24,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import static com.project.zipkok.kok.controller.KokControllerResponseMatcher.*;
-import static com.project.zipkok.kok.response.MakeTestKokResponse.*;
+import static com.project.zipkok.kok.response.MakeTestKokControllerResponse.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;

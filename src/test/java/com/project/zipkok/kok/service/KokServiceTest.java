@@ -24,7 +24,7 @@ import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
 import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALESTATE;
 import static com.project.zipkok.kok.fixture.StarFixture.DUMMY_STAR;
 import static com.project.zipkok.kok.fixture.UserFixture.DUMMY_USER;
-import static com.project.zipkok.kok.response.MakeTestKokResponse.makePostOrPutKokRequest;
+import static com.project.zipkok.kok.response.MakeTestKokControllerResponse.makePostOrPutKokRequest;
 import static com.project.zipkok.kok.service.KokServiceResponseMatcher.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
