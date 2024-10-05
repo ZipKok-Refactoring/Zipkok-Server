@@ -1,10 +1,7 @@
 package com.project.zipkok.kok.service;
 
 import com.project.zipkok.dto.*;
-import com.project.zipkok.model.KokImage;
 import com.project.zipkok.model.RealEstate;
-
-import java.util.Optional;
 
 import static com.project.zipkok.kok.fixture.CheckedFixture.*;
 import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;

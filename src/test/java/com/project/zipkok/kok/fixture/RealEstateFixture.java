@@ -6,10 +6,8 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
-import static com.project.zipkok.common.enums.RealEstateType.APARTMENT;
 import static com.project.zipkok.common.enums.RealEstateType.ONEROOM;
 import static com.project.zipkok.common.enums.TransactionType.MONTHLY;
-import static com.project.zipkok.common.enums.TransactionType.PURCHASE;
 
 public class RealEstateFixture {
 

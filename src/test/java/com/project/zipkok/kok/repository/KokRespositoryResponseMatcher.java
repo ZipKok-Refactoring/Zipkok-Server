@@ -10,7 +10,6 @@ import java.util.List;
 import static com.project.zipkok.kok.fixture.CheckedFixture.*;
 import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
 import static com.project.zipkok.kok.fixture.UserFixture.DUMMY_ZIM;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
