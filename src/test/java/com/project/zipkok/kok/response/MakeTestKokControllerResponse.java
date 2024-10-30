@@ -1,10 +1,6 @@
 package com.project.zipkok.kok.response;
 
 import com.project.zipkok.dto.*;
-import com.project.zipkok.model.DetailOption;
-import com.project.zipkok.model.Kok;
-import com.project.zipkok.model.KokImage;
-import com.project.zipkok.model.RealEstate;
 import org.springframework.mock.web.MockMultipartFile;
 
 import java.util.ArrayList;
@@ -12,32 +8,22 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static com.project.zipkok.kok.fixture.CheckedFixture.*;
-import static com.project.zipkok.kok.fixture.CheckedFixture.DUMMY_FURNITURE_OPTION;
-import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
-import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALESTATE;
-import static com.project.zipkok.kok.fixture.StarFixture.DUMMY_STAR;
-
 public class MakeTestKokControllerResponse {
-
-    public static final Kok kok = KOK_01;
 
     public static GetKokResponse makeTestGetKokResponse(){
         List<GetKokResponse.Koks> koks = new ArrayList<>();
 
-        RealEstate realEstate = kok.getRealEstate();
-
         koks.add(GetKokResponse.Koks.builder()
-                .kokId(kok.getKokId())
-                .realEstateId(realEstate.getRealEstateId())
-                .imageUrl(kok.getKokImages().get(0).getImageUrl())
-                .address(realEstate.getAddress())
-                .detailAddress(realEstate.getDetailAddress())
-                .estateAgent(realEstate.getAgent())
-                .transactionType(realEstate.getTransactionType().getDescription())
-                .realEstateType(realEstate.getRealEstateType().getDescription())
-                .deposit(realEstate.getDeposit())
-                .price(realEstate.getPrice())
+                .kokId(1L)
+                .realEstateId(1L)
+                .imageUrl("test.com")
+                .address("testAddress")
+                .detailAddress("testDetailAddress")
+                .estateAgent("testAgent")
+                .transactionType("testMonthly")
+                .realEstateType("testOneRoom")
+                .deposit(1000L)
+                .price(10L)
                 .isZimmed(true)
                 .build()
         );
@@ -49,30 +35,28 @@ public class MakeTestKokControllerResponse {
 
     public static GetKokDetailResponse makeTestGetkokDetailResponse(){
 
-        RealEstate realEstate = kok.getRealEstate();
-
         return GetKokDetailResponse.builder()
-                .kokId(kok.getKokId())
+                .kokId(1L)
                 .imageInfo(
                         GetKokDetailResponse.ImageInfo.builder()
                                 .imageNumber(1)
-                                .imageUrls(kok.getKokImages().stream().map(KokImage::getImageUrl).toList())
+                                .imageUrls(List.of("test1","test2"))
                                 .build()
                 )
-                .realEstateId(realEstate.getRealEstateId())
-                .address(realEstate.getAddress())
-                .detailAddress(realEstate.getDetailAddress())
-                .transactionType(realEstate.getTransactionType().getDescription())
-                .deposit(realEstate.getDeposit())
-                .price(realEstate.getPrice())
-                .detail(realEstate.getDetail())
-                .areaSize(realEstate.getAreaSize())
-                .pyeongsu((int)realEstate.getPyeongsu())
-                .realEstateType(realEstate.getRealEstateType().getDescription())
-                .floorNum(realEstate.getFloorNum())
-                .administrativeFee(realEstate.getAdministrativeFee())
-                .latitude(realEstate.getLatitude())
-                .longitude(realEstate.getLongitude())
+                .realEstateId(1L)
+                .address("testAddress")
+                .detailAddress("testDetailAddress")
+                .transactionType("testMonthly")
+                .deposit(1000L)
+                .price(10L)
+                .detail("testDetail")
+                .areaSize(10f)
+                .pyeongsu(1)
+                .realEstateType("testOneRoom")
+                .floorNum(1)
+                .administrativeFee(5)
+                .latitude(1.1)
+                .longitude(1.1)
                 .build();
     }
 
@@ -202,12 +186,12 @@ public class MakeTestKokControllerResponse {
 
     public static PostOrPutKokRequest makePostOrPutKokRequest() {
         PostOrPutKokRequest.ReviewInfo reviewInfo = PostOrPutKokRequest.ReviewInfo.builder()
-                .checkedImpressions(List.of(DUMMY_IMPRESSION.getImpressionTitle()))
-                .facilityStarCount(DUMMY_STAR.getFacilityStar())
-                .infraStarCount(DUMMY_STAR.getInfraStar())
-                .structureStarCount(DUMMY_STAR.getStructureStar())
-                .vibeStarCount(DUMMY_STAR.getVibeStar())
-                .reviewText(KOK_01.getReview())
+                .checkedImpressions(List.of("testImpression"))
+                .facilityStarCount(5)
+                .infraStarCount(5)
+                .structureStarCount(5)
+                .vibeStarCount(5)
+                .reviewText("testReview")
                 .build();
 
         List<PostOrPutKokRequest.Option> options_outer = new ArrayList<>();
@@ -216,30 +200,30 @@ public class MakeTestKokControllerResponse {
 
         options_outer.add(
                 PostOrPutKokRequest.Option.builder()
-                        .optionId(DUMMY_OPTION_OUTER.getOptionId())
-                        .checkedDetailOptionIds(DUMMY_OPTION_OUTER.getDetailOptions().stream().map(DetailOption::getDetailOptionId).toList())
+                        .optionId(1L)
+                        .checkedDetailOptionIds(List.of(1L, 2L, 3L))
                         .build()
         );
 
         options_inner.add(
                 PostOrPutKokRequest.Option.builder()
-                        .optionId(DUMMY_OPTION_INNER.getOptionId())
-                        .checkedDetailOptionIds(DUMMY_OPTION_INNER.getDetailOptions().stream().map(DetailOption::getDetailOptionId).toList())
+                        .optionId(1L)
+                        .checkedDetailOptionIds(List.of(1L, 2L, 3L))
                         .build()
         );
         options_contract.add(
                 PostOrPutKokRequest.Option.builder()
-                        .optionId(DUMMY_OPTION_CONTRACT.getOptionId())
-                        .checkedDetailOptionIds(DUMMY_OPTION_CONTRACT.getDetailOptions().stream().map(DetailOption::getDetailOptionId).toList())
+                        .optionId(1L)
+                        .checkedDetailOptionIds(List.of(1L, 2L, 3L))
                         .build()
         );
 
         return PostOrPutKokRequest.builder()
-                .kokId(KOK_01.getKokId())
-                .realEstateId(DUMMY_REALESTATE.getRealEstateId())
-                .checkedHighlights(List.of(DUMMY_HIGHLIGHT.getTitle()))
-                .checkedFurnitureOptions(List.of(DUMMY_FURNITURE_OPTION.getFurnitureName()))
-                .direction(KOK_01.getDirection())
+                .kokId(1L)
+                .realEstateId(1L)
+                .checkedHighlights(List.of("testHighlight"))
+                .checkedFurnitureOptions(List.of("testFurniture"))
+                .direction("testDirection")
                 .reviewInfo(reviewInfo)
                 .checkedOuterOptions(options_outer)
                 .checkedInnerOptions(options_inner)

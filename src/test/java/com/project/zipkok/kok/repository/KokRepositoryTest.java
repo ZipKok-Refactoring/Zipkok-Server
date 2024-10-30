@@ -61,8 +61,8 @@ public class KokRepositoryTest {
     @Test
     void 유저_아이디로_콕_무한페이징_불러오기() throws Exception {
         //given
-        Kok kok = KOK_01;
         User user = DUMMY_USER;
+        Kok kok = KOK_01;
         Pageable pageable = PageRequest.of(0, 10);
         kokRepository.save(kok);
 
