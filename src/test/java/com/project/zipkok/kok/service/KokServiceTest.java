@@ -1,10 +1,12 @@
 package com.project.zipkok.kok.service;
 
+import com.project.zipkok.common.enums.RealEstateType;
+import com.project.zipkok.common.enums.TransactionType;
 import com.project.zipkok.dto.*;
-import com.project.zipkok.model.Kok;
-import com.project.zipkok.model.Star;
+import com.project.zipkok.model.*;
 import com.project.zipkok.repository.*;
 import com.project.zipkok.service.KokService;
+import com.project.zipkok.util.FileUploadUtils;
 import com.project.zipkok.util.jwt.JwtUserDetails;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,12 +21,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.project.zipkok.common.enums.Role.GUEST;
-import static com.project.zipkok.kok.fixture.CheckedFixture.*;
-import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
-import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALESTATE;
-import static com.project.zipkok.kok.fixture.StarFixture.DUMMY_STAR;
 import static com.project.zipkok.kok.fixture.UserFixture.DUMMY_USER;
 import static com.project.zipkok.kok.response.MakeTestKokControllerResponse.makePostOrPutKokRequest;
+import static com.project.zipkok.kok.response.MakeTestKokServiceResponse.makeTestKok;
 import static com.project.zipkok.kok.service.KokServiceResponseMatcher.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -48,6 +47,8 @@ public class KokServiceTest {
     private OptionRepository optionRepository;
     @Mock
     private DetailOptionRepository detailOptionRepository;
+    @Mock
+    private FileUploadUtils fileUploadUtils;
 
     @InjectMocks
     private KokService kokService;
@@ -58,7 +59,15 @@ public class KokServiceTest {
     @Test
     void 콕_무한페이징_DTO를_반환한다() throws Exception {
         //given
-        GetKokWithZimStatus getKokWithZimStatus = new GetKokWithZimStatus(KOK_01, true);
+        Kok kok = makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true,
+                "테스트입니다"
+        );
+        GetKokWithZimStatus getKokWithZimStatus = new GetKokWithZimStatus(kok, true);
         Pageable pageable = PageRequest.of(0, 10);
 
         given(kokRepository.getKokWithZimStatus(eq(DUMMY_USER.getUserId()), eq(pageable))).willReturn(List.of(getKokWithZimStatus));
@@ -67,74 +76,119 @@ public class KokServiceTest {
         GetKokResponse response = kokService.getKoks(userDetails, pageable);
 
         //then
-        expectedServiceGetKokResponse(response);
+        expectedServiceGetKokResponse(response, kok);
     }
 
     @DisplayName("콕 세부 정보 반환 service 성공")
     @Test
     void 콕_세부정보_반환() throws Exception {
         //given
-        given(userRepository.findByUserId(DUMMY_USER.getUserId())).willReturn(DUMMY_USER);
-        given(kokRepository.findById(KOK_01.getKokId())).willReturn(Optional.of(KOK_01));
+        Kok kok =makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true,
+                "테스트입니다"
+        );
+        User user = kok.getUser();
+        given(userRepository.findByUserId(user.getUserId())).willReturn(user);
+        given(kokRepository.findById(kok.getKokId())).willReturn(Optional.of(kok));
 
         //when
-        GetKokDetailResponse response = kokService.getKokDetail(userDetails, KOK_01.getKokId());
+        GetKokDetailResponse response = kokService.getKokDetail(userDetails, kok.getKokId());
 
         //then
-        expectedServiceGetKokDetailResponse(response);
+        expectedServiceGetKokDetailResponse(response, kok);
     }
 
     @DisplayName("콕 집 주변 정보 service 성공")
     @Test
     void 콕_집_주변_정보_반환() throws Exception {
         //given
-        given(userRepository.findByUserId(DUMMY_USER.getUserId())).willReturn(DUMMY_USER);
-        given(kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(KOK_01.getKokId())).willReturn(KOK_01);
+        Kok kok =makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true,
+                "테스트입니다"
+        );
+        User user = kok.getUser();
+        given(userRepository.findByUserId(user.getUserId())).willReturn(user);
+        given(kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(kok.getKokId())).willReturn(kok);
 
         //when
-        GetKokOuterInfoResponse response = kokService.getKokOuterInfo(userDetails, KOK_01.getKokId());
+        GetKokOuterInfoResponse response = kokService.getKokOuterInfo(userDetails, kok.getKokId());
 
         //then
-        expectedServiceGetKokOuterInfoResponse(response);
+        expectedServiceGetKokOuterInfoResponse(response, kok);
     }
 
     @DisplayName("콕 집 내부 정보 service 성공")
     @Test
     void 콕_집_내부_정보_반환() throws Exception {
         //given
-        given(userRepository.findByUserId(DUMMY_USER.getUserId())).willReturn(DUMMY_USER);
-        given(kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(KOK_01.getKokId())).willReturn(KOK_01);
+        Kok kok =makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true,
+                "테스트입니다"
+        );
+        User user = kok.getUser();
+        given(userRepository.findByUserId(user.getUserId())).willReturn(user);
+        given(kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(kok.getKokId())).willReturn(kok);
 
         //when
-        GetKokInnerInfoResponse response = kokService.getKokInnerInfo(userDetails, KOK_01.getKokId());
+        GetKokInnerInfoResponse response = kokService.getKokInnerInfo(userDetails, kok.getKokId());
 
         //then
-        expectedServiceGetKokInnerInfoResponse(response);
+        expectedServiceGetKokInnerInfoResponse(response, kok);
     }
 
     @DisplayName("콕 집 중개/계약 정보 service 성공")
     @Test
     void 콕_집_중개_계약_정보_반환() throws Exception {
         //given
-        given(userRepository.findByUserId(DUMMY_USER.getUserId())).willReturn(DUMMY_USER);
-        given(kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(KOK_01.getKokId())).willReturn(KOK_01);
+        Kok kok =makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true
+                ,"테스트입니다"
+        );
+        User user = kok.getUser();
+        given(userRepository.findByUserId(user.getUserId())).willReturn(user);
+        given(kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(kok.getKokId())).willReturn(kok);
 
         //when
-        GetKokContractResponse response = kokService.getKokContractInfo(userDetails, KOK_01.getKokId());
+        GetKokContractResponse response = kokService.getKokContractInfo(userDetails, kok.getKokId());
 
         //then
-        expectedServiceGetKokContractInfoResponse(response);
+        expectedServiceGetKokContractInfoResponse(response, kok);
     }
 
     @DisplayName("콕 집 리뷰 정보 service 성공")
     @Test
     void 콕_집_리뷰_정보_반환() throws Exception {
         //given
-        given(userRepository.findByUserId(DUMMY_USER.getUserId())).willReturn(DUMMY_USER);
-        given(kokRepository.findKokWithImpressionAndStar(KOK_01.getKokId())).willReturn(KOK_01);
+        Kok kok =makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true,
+                "테스트입니다"
+        );
+        User user = kok.getUser();
+        given(userRepository.findByUserId(user.getUserId())).willReturn(user);
+        given(kokRepository.findKokWithImpressionAndStar(kok.getKokId())).willReturn(kok);
 
         //when
-        GetKokReviewInfoResponse response = kokService.getKokReviewInfo(userDetails, KOK_01.getKokId());
+        GetKokReviewInfoResponse response = kokService.getKokReviewInfo(userDetails, kok.getKokId());
 
         //then
         expectedServiceGetKokReviewInfoResponse(response);
@@ -144,15 +198,24 @@ public class KokServiceTest {
     @Test
     void 콕_설정_정보_반환() throws Exception {
         //given
-        given(userRepository.findByUserId(DUMMY_USER.getUserId())).willReturn(DUMMY_USER);
-        given(kokRepository.findByKokId(KOK_01.getKokId())).willReturn(KOK_01);
-        given(furnitureOptionRepository.findAll()).willReturn(List.of(DUMMY_FURNITURE_OPTION));
+        Kok kok =makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true,
+                "테스트입니다"
+        );
+        User user = kok.getUser();
+        given(userRepository.findByUserId(user.getUserId())).willReturn(user);
+        given(kokRepository.findByKokId(kok.getKokId())).willReturn(kok);
+        given(furnitureOptionRepository.findAll()).willReturn(List.of(kok.getCheckedFurnitures().iterator().next().getFurnitureOption()));
 
         //when
-        GetKokConfigInfoResponse response = kokService.getKokConfigInfo(userDetails, KOK_01.getKokId());
+        GetKokConfigInfoResponse response = kokService.getKokConfigInfo(userDetails, kok.getKokId());
 
         //then
-        expectedServiceGetKokConfigInfoResponse(response);
+        expectedServiceGetKokConfigInfoResponse(response, kok);
     }
 
     @DisplayName("콕 생성 service 성공")
@@ -161,6 +224,7 @@ public class KokServiceTest {
         //given
         givenForCreateOrUpdateKok();
         PostOrPutKokRequest request = makePostOrPutKokRequest();
+        given(fileUploadUtils.deleteFile(any())).willReturn(null);
 
         //when
         PostOrPutKokResponse response = kokService.createOrUpdateKok(userDetails, null, request);
@@ -171,13 +235,22 @@ public class KokServiceTest {
 
 
     private void givenForCreateOrUpdateKok(){
-        given(kokRepository.save(any(Kok.class))).willReturn(KOK_01);
-        given(userRepository.findByUserIdWithZimAndKok(DUMMY_USER.getUserId())).willReturn(Optional.of(DUMMY_USER));
-        given(realEstateRepository.findById(DUMMY_REALESTATE.getRealEstateId())).willReturn(Optional.of(DUMMY_REALESTATE));
-        given(kokRepository.findById(KOK_01.getKokId())).willReturn(Optional.of(KOK_01));
-        given(starRepository.save(any(Star.class))).willReturn(DUMMY_STAR);
-        given(furnitureOptionRepository.findAll()).willReturn(List.of(DUMMY_FURNITURE_OPTION));
-        given(optionRepository.findAll()).willReturn(List.of(DUMMY_OPTION_OUTER, DUMMY_OPTION_INNER, DUMMY_OPTION_CONTRACT));
-        given(detailOptionRepository.findAll()).willReturn(List.of(DUMMY_DETAIL_OPTION_OUTER, DUMMY_DETAIL_OPTION_INNER, DUMMY_DETAIL_OPTION_CONTRACT));
+        Kok kok =makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "http://test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true,
+                "테스트입니다"
+        );
+        User user = kok.getUser();
+        given(kokRepository.save(any(Kok.class))).willReturn(kok);
+        given(userRepository.findByUserIdWithZimAndKok(user.getUserId())).willReturn(Optional.of(user));
+//        given(realEstateRepository.findById(kok.getRealEstate().getRealEstateId())).willReturn(Optional.of(kok.getRealEstate()));
+        given(kokRepository.findById(kok.getKokId())).willReturn(Optional.of(kok));
+        given(starRepository.save(any(Star.class))).willReturn(kok.getStar());
+        given(furnitureOptionRepository.findAll()).willReturn(kok.getCheckedFurnitures().stream().map(CheckedFurniture::getFurnitureOption).toList());
+        given(optionRepository.findAll()).willReturn(kok.getCheckedOptions().stream().map(CheckedOption::getOption).toList());
+        given(detailOptionRepository.findAll()).willReturn(kok.getCheckedDetailOptions().stream().map(CheckedDetailOption::getDetailOption).toList());
     }
 }
