@@ -100,6 +100,9 @@ public class KokService {
         User user = userRepository.findByUserId(jwtUserDetail.getUserId());
         Kok kok = kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(kokId);
 
+        log.info(String.valueOf(kok.getKokId()));
+        log.info(kok.getRealEstate().getRealEstateId().toString());
+
         validateUserAndKok(user, kok);
 
         return GetKokContractResponse.of(kok);

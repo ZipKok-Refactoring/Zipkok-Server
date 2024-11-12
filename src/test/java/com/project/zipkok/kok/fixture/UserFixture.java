@@ -34,7 +34,7 @@ public class UserFixture {
             .highlights(Set.of(DUMMY_HIGHLIGHT))
             .options(Set.of(DUMMY_OPTION_OUTER, DUMMY_OPTION_INNER, DUMMY_OPTION_CONTRACT))
             .impressions(Set.of(DUMMY_IMPRESSION))
-            .koks(Set.of(KOK_01))
+            //.koks(Set.of(KOK_01))
             .build();
 
     public static final Zim DUMMY_ZIM = new Zim(DUMMY_REALESTATE, DUMMY_USER);
@@ -48,6 +48,6 @@ public class UserFixture {
 
         ReflectionTestUtils.setField(DUMMY_USER, "userId", 1L);
         ReflectionTestUtils.setField(DUMMY_USER, "zims", Set.of(DUMMY_ZIM));
-        ReflectionTestUtils.setField(DUMMY_USER, "koks", Set.of(DUMMY_KOK));
+        ReflectionTestUtils.setField(DUMMY_USER, "koks", Set.of(KOK_01));
     }
 }

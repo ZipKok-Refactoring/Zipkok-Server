@@ -10,21 +10,33 @@ import java.util.List;
 
 public class MakeTestKokControllerResponse {
 
-    public static GetKokResponse makeTestGetKokResponse(){
+    public static GetKokResponse makeTestGetKokResponse(
+            Long id,
+            Long rsId,
+            String url,
+            String address,
+            String dAddres,
+            String agent,
+            String transType,
+            String realType,
+            Long deposit,
+            Long price,
+            boolean isZimmed
+    ){
         List<GetKokResponse.Koks> koks = new ArrayList<>();
 
         koks.add(GetKokResponse.Koks.builder()
-                .kokId(1L)
-                .realEstateId(1L)
-                .imageUrl("test.com")
-                .address("testAddress")
-                .detailAddress("testDetailAddress")
-                .estateAgent("testAgent")
-                .transactionType("testMonthly")
-                .realEstateType("testOneRoom")
-                .deposit(1000L)
-                .price(10L)
-                .isZimmed(true)
+                .kokId(id)
+                .realEstateId(rsId)
+                .imageUrl(url)
+                .address(address)
+                .detailAddress(dAddres)
+                .estateAgent(agent)
+                .transactionType(transType)
+                .realEstateType(realType)
+                .deposit(deposit)
+                .price(price)
+                .isZimmed(isZimmed)
                 .build()
         );
 
@@ -33,45 +45,68 @@ public class MakeTestKokControllerResponse {
                 .build();
     }
 
-    public static GetKokDetailResponse makeTestGetkokDetailResponse(){
+    public static GetKokDetailResponse makeTestGetkokDetailResponse(
+            Long id,
+            int imageNum,
+            List<String> imageUrls,
+            Long reId,
+            String address,
+            String dAddress,
+            String transType,
+            Long deposit,
+            Long price,
+            String detail,
+            float area,
+            int pyeongsu,
+            String reType,
+            int floorNum,
+            int adFee,
+            double latitude,
+            double longitude
+    ){
 
         return GetKokDetailResponse.builder()
-                .kokId(1L)
+                .kokId(id)
                 .imageInfo(
                         GetKokDetailResponse.ImageInfo.builder()
-                                .imageNumber(1)
-                                .imageUrls(List.of("test1","test2"))
+                                .imageNumber(imageNum)
+                                .imageUrls(imageUrls)
                                 .build()
                 )
-                .realEstateId(1L)
-                .address("testAddress")
-                .detailAddress("testDetailAddress")
-                .transactionType("testMonthly")
-                .deposit(1000L)
-                .price(10L)
-                .detail("testDetail")
-                .areaSize(10f)
-                .pyeongsu(1)
-                .realEstateType("testOneRoom")
-                .floorNum(1)
-                .administrativeFee(5)
-                .latitude(1.1)
-                .longitude(1.1)
+                .realEstateId(reId)
+                .address(address)
+                .detailAddress(dAddress)
+                .transactionType(transType)
+                .deposit(deposit)
+                .price(price)
+                .detail(detail)
+                .areaSize(area)
+                .pyeongsu(pyeongsu)
+                .realEstateType(reType)
+                .floorNum(floorNum)
+                .administrativeFee(adFee)
+                .latitude(latitude)
+                .longitude(longitude)
                 .build();
     }
 
-    public static GetKokOuterInfoResponse makeTestGetKokOuterInfoResponse(){
-        List<String> highlights = Arrays.asList("test1", "test2", "test3", "test4");
+    public static GetKokOuterInfoResponse makeTestGetKokOuterInfoResponse(
+            List<String> highlight,
+            List<String> options,
+            List<Integer> orderNumber,
+            List<String> detailOptions
+    ){
+        List<String> highlights = highlight;
         List<GetKokOuterInfoResponse.OuterOption> outerOptions = Arrays.asList(
                 GetKokOuterInfoResponse.OuterOption.builder()
-                        .option("test1")
-                        .orderNumber(1)
-                        .detailOptions(Arrays.asList("1", "2", "3"))
+                        .option(options.get(0))
+                        .orderNumber(orderNumber.get(0))
+                        .detailOptions(detailOptions)
                         .build(),
                 GetKokOuterInfoResponse.OuterOption.builder()
-                        .option("test2")
-                        .orderNumber(2)
-                        .detailOptions(Arrays.asList("1", "2", "3"))
+                        .option(options.get(1))
+                        .orderNumber(orderNumber.get(1))
+                        .detailOptions(detailOptions)
                         .build()
         );
 
@@ -81,39 +116,51 @@ public class MakeTestKokControllerResponse {
                 .build();
     }
 
-    public static GetKokInnerInfoResponse makeTestGetKokInnerInfoResponse(){
-        List<String> furnitures = Arrays.asList("test1", "test2", "test3", "test4");
+    public static GetKokInnerInfoResponse makeTestGetKokInnerInfoResponse(
+            List<String> furniture,
+            List<String> options,
+            List<Integer> orderNumber,
+            List<String> detailOptions,
+            String direction
+    ){
+        List<String> furnitures =furniture;
         List<GetKokInnerInfoResponse.InnerOption> innerOptions = Arrays.asList(
                 GetKokInnerInfoResponse.InnerOption.builder()
-                        .option("test1")
-                        .orderNumber(1)
-                        .detailOptions(Arrays.asList("1", "2", "3"))
+                        .option(options.get(0))
+                        .orderNumber(orderNumber.get(0))
+                        .detailOptions(detailOptions)
                         .build(),
                 GetKokInnerInfoResponse.InnerOption.builder()
-                        .option("test2")
-                        .orderNumber(2)
-                        .detailOptions(Arrays.asList("1", "2", "3"))
+                        .option(options.get(1))
+                        .orderNumber(orderNumber.get(1))
+                        .detailOptions(detailOptions)
                         .build()
         );
 
         return GetKokInnerInfoResponse.builder()
                 .furnitureOptions(furnitures)
-                .direction("남쪽")
+                .direction(direction)
                 .options(innerOptions)
                 .build();
     }
 
-    public static GetKokContractResponse makeTestGetKokContractResponse() {
+    public static GetKokContractResponse makeTestGetKokContractResponse(
+            List<String> options,
+            List<Integer> orderNumber,
+            List<String> detailOptions,
+            int imageNumber,
+            List<String> imageUrl
+    ) {
         List<GetKokContractResponse.ContractOptions> contractOptions = Arrays.asList(
                 GetKokContractResponse.ContractOptions.builder()
-                        .option("test1")
-                        .orderNumber(1)
-                        .detailOptions(Arrays.asList("1", "2", "3"))
+                        .option(options.get(0))
+                        .orderNumber(orderNumber.get(0))
+                        .detailOptions(detailOptions)
                         .build(),
                 GetKokContractResponse.ContractOptions.builder()
-                        .option("test2")
-                        .orderNumber(2)
-                        .detailOptions(Arrays.asList("1", "2", "3"))
+                        .option(options.get(1))
+                        .orderNumber(orderNumber.get(1))
+                        .detailOptions(detailOptions)
                         .build()
         );
 
@@ -121,41 +168,53 @@ public class MakeTestKokControllerResponse {
                 .options(contractOptions)
                 .imageInfo(
                         GetKokContractResponse.ImageInfo.builder()
-                                .imageNumber(2)
-                                .imageUrls(Arrays.asList("test1", "test2", "test3"))
+                                .imageNumber(imageNumber)
+                                .imageUrls(imageUrl)
                                 .build()
                 )
                 .build();
     }
 
-    public static GetKokReviewInfoResponse makeTestGetKokReviewInfoResponse() {
+    public static GetKokReviewInfoResponse makeTestGetKokReviewInfoResponse(
+            List<String> impressions,
+            int structureStarCount,
+            int infraStarCount,
+            int facilityStarCount,
+            int vibeStarCount,
+            String text
+    ) {
         return GetKokReviewInfoResponse.builder()
-                .impressions(Arrays.asList("1", "2", "3"))
-                .structureStarCount(5)
-                .infraStarCount(5)
-                .facilityStarCount(5)
-                .vibeStarCount(5)
-                .reviewText("테스트입니다")
+                .impressions(impressions)
+                .structureStarCount(structureStarCount)
+                .infraStarCount(infraStarCount)
+                .facilityStarCount(facilityStarCount)
+                .vibeStarCount(vibeStarCount)
+                .reviewText(text)
                 .build();
     }
 
-    public static GetKokConfigInfoResponse makeTestGetKokConfigInfoResponse() {
-        List<String> list = Arrays.asList("1", "2", "3", "4", "5", "6", "7", "8", "9");
+    public static GetKokConfigInfoResponse makeTestGetKokConfigInfoResponse(
+            List<String> lists,
+            Long id, String optionTitle, int orderNumber,
+            int structureStarCount, int infraStarCount, int facilityStarCount, int vibeStarCount,String text,
+            String direction
+    ) {
+        List<String> list = lists;
         List<GetKokConfigInfoResponse.Option> options = Collections.singletonList(
                 GetKokConfigInfoResponse.Option.builder()
-                        .optionId(1L)
-                        .optionTitle("test")
-                        .orderNumber(1)
+                        .optionId(id)
+                        .optionTitle(optionTitle)
+                        .orderNumber(orderNumber)
                         .build()
         );
         GetKokConfigInfoResponse.ReviewInfo reviewInfo = GetKokConfigInfoResponse.ReviewInfo.builder()
                 .impressions(list)
                 .checkedImpressions(list)
-                .facilityStarCount(5)
-                .infraStarCount(5)
-                .vibeStarCount(5)
-                .structureStarCount(5)
-                .reviewText("테스트입니다")
+                .facilityStarCount(facilityStarCount)
+                .infraStarCount(infraStarCount)
+                .vibeStarCount(vibeStarCount)
+                .structureStarCount(structureStarCount)
+                .reviewText(text)
                 .build();
 
         return GetKokConfigInfoResponse.builder()
@@ -164,7 +223,7 @@ public class MakeTestKokControllerResponse {
                 .furnitureOptions(list)
                 .checkedFurnitureOptions(list)
                 .reviewInfo(reviewInfo)
-                .direction("남쪽")
+                .direction(direction)
                 .outerImageUrls(list)
                 .innerImageUrls(list)
                 .contractImageUrls(list)
@@ -174,14 +233,14 @@ public class MakeTestKokControllerResponse {
                 .build();
     }
 
-    public static PostOrPutKokResponse makeTestPostOrPutKokResponse(){
+    public static PostOrPutKokResponse makeTestPostOrPutKokResponse(Long id){
         return PostOrPutKokResponse.builder()
-                .kokId(1L)
+                .kokId(id)
                 .build();
     }
 
-    public static MockMultipartFile makeTestPostOrPutKokRequest(){
-        return new MockMultipartFile("file", "test.txt", "text/plain", "test".getBytes());
+    public static MockMultipartFile makeTestPostOrPutKokRequest(String file, String fileName, String contentType, String test){
+        return new MockMultipartFile(file, fileName, contentType, test.getBytes());
     }
 
     public static PostOrPutKokRequest makePostOrPutKokRequest() {
