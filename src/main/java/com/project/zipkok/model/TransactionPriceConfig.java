@@ -3,7 +3,7 @@ package com.project.zipkok.model;
 import com.project.zipkok.dto.PatchOnBoardingRequest;
 import com.project.zipkok.dto.PutUpdateMyInfoRequest;
 import jakarta.persistence.*;
-import jakarta.transaction.Transaction;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -47,8 +47,7 @@ public class TransactionPriceConfig {
     @Column(name = "status", nullable = false)
     private String status = "active";
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(mappedBy = "transactionPriceConfig", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private User user;
 
     public TransactionPriceConfig(User user) {
@@ -75,5 +74,18 @@ public class TransactionPriceConfig {
         this.yDepositMax = putUpdateMyInfoRequest.getYdepositMax();
         this.purchaseMin = putUpdateMyInfoRequest.getPurchaseMin();
         this.purchaseMax = putUpdateMyInfoRequest.getPurchaseMax();
+    }
+
+    @Builder
+    public TransactionPriceConfig(Long mPriceMin, Long mPriceMax, Long mDepositMin, Long mDepositMax, Long yDepositMin, Long yDepositMax, Long purchaseMin, Long purchaseMax) {
+        this.mPriceMin = mPriceMin;
+        this.mPriceMax = mPriceMax;
+        this.mDepositMin = mDepositMin;
+        this.mDepositMax = mDepositMax;
+        this.yDepositMin = yDepositMin;
+        this.yDepositMax = yDepositMax;
+        this.purchaseMin = purchaseMin;
+        this.purchaseMax = purchaseMax;
+        this.status = "active";
     }
 }
