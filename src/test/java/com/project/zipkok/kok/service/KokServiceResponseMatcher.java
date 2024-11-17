@@ -5,7 +5,6 @@ import com.project.zipkok.model.Kok;
 import com.project.zipkok.model.Option;
 import com.project.zipkok.model.RealEstate;
 
-import static com.project.zipkok.kok.fixture.CheckedFixture.*;
 import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

@@ -1,8 +1,6 @@
 package com.project.zipkok.kok.response;
 
-import com.project.zipkok.common.enums.OptionCategory;
-import com.project.zipkok.common.enums.RealEstateType;
-import com.project.zipkok.common.enums.TransactionType;
+import com.project.zipkok.common.enums.*;
 import com.project.zipkok.model.*;
 
 import java.util.ArrayList;
@@ -21,22 +19,9 @@ public class MakeTestKokServiceResponse {
             String kokReview
     ){
 
-        RealEstate dummyRealEstate = RealEstate.builder().build();
         User dummyUser = User.builder().build();
         Kok dummyKok = Kok.builder().build();
-        RealEstateImage realEstateImage = new RealEstateImage(imageurl, dummyRealEstate);
-
-        RealEstate realEstate = RealEstate.builder()
-                .realEstateId(reId)
-                .realEstateImages(List.of(realEstateImage))
-                .address(address)
-                .detailAddress(daddress)
-                .agent(agent)
-                .transactionType(transType)
-                .realEstateType(realType)
-                .deposit(deposit)
-                .price(price)
-                .build();
+        RealEstate realEstate = getRealEstate(reId,imageurl,address,daddress,agent,transType,realType,deposit,price);
 
         Highlight highlight = new Highlight(dummyUser, "test");
         CheckedHighlight checkedHighlight = new CheckedHighlight(dummyKok,highlight);
@@ -101,6 +86,51 @@ public class MakeTestKokServiceResponse {
                 .kokImages(kokImages)
                 .star(star)
                 .review(kokReview)
+                .direction("test")
+                .build();
+    }
+
+    private static RealEstate getRealEstate(Long reId, String imageurl, String address, String daddress, String agent, TransactionType transType, RealEstateType realType, Long deposit, int price){
+        RealEstate dummyRealEstate = RealEstate.builder().build();
+        RealEstateImage realEstateImage = new RealEstateImage(imageurl, dummyRealEstate);
+        return RealEstate.builder()
+                .realEstateId(reId)
+                .realEstateImages(List.of(realEstateImage))
+                .address(address)
+                .detailAddress(daddress)
+                .agent(agent)
+                .transactionType(transType)
+                .realEstateType(realType)
+                .deposit(deposit)
+                .price(price)
+                .status("active")
+                .build();
+    }
+
+    public static RealEstate getRealEstateWithoutImage(Long reId, String address, String daddress, String agent, TransactionType transType, RealEstateType realType, Long deposit, int price){
+        return RealEstate.builder()
+                .realEstateId(reId)
+                .address(address)
+                .detailAddress(daddress)
+                .agent(agent)
+                .transactionType(transType)
+                .realEstateType(realType)
+                .deposit(deposit)
+                .price(price)
+                .status("active")
+                .build();
+    }
+
+    public static User getUser(Long userId){
+        return User.builder()
+                .userId(userId)
+                .birthday("test")
+                .email("test")
+                .oAuthProvider(OAuthProvider.GOOGLE)
+                .nickname("test")
+                .gender(Gender.MALE)
+                .role(Role.USER)
+                .status("active")
                 .build();
     }
 }

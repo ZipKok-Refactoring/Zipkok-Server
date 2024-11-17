@@ -1,5 +1,7 @@
 package com.project.zipkok.kok.repository;
 
+import com.project.zipkok.common.enums.RealEstateType;
+import com.project.zipkok.common.enums.TransactionType;
 import com.project.zipkok.dto.GetKokWithZimStatus;
 import com.project.zipkok.model.*;
 import com.project.zipkok.repository.*;
@@ -14,10 +16,10 @@ import org.springframework.data.domain.Slice;
 import java.util.List;
 
 import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
-import static com.project.zipkok.kok.fixture.RealEstateFixture.DUMMY_REALESTATE;
 import static com.project.zipkok.kok.fixture.UserFixture.DUMMY_USER;
 import static com.project.zipkok.kok.fixture.UserFixture.DUMMY_ZIM;
 import static com.project.zipkok.kok.repository.KokRespositoryResponseMatcher.*;
+import static com.project.zipkok.kok.response.MakeTestKokServiceResponse.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
@@ -27,14 +29,28 @@ public class KokRepositoryTest {
     private KokRepository kokRepository;
     @Autowired
     private ZimRepository zimRepository;
+    @Autowired
+    private RealEstateRepository realEstateRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @DisplayName("유저와 매물에 해당하는 kok 존재 여부 query 성공")
     @Test
     void 콕_존재_여부() throws Exception {
         //given
-        kokRepository.save(KOK_01);
-        User user = DUMMY_USER;
-        RealEstate realEstate = DUMMY_REALESTATE;
+        Kok kok =makeTestKok(
+                1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
+                1L, "test/test",
+                1L,
+                "testOption", true, 1,
+                "testDetailOption", true,
+                "테스트입니다"
+        );
+        User user = getUser(1L);
+        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10);
+        userRepository.save(user);
+        realEstateRepository.save(realEstate);
+        kokRepository.save(kok);
 
         //when
         boolean response = kokRepository.existsByUserAndRealEstate(user, realEstate);
