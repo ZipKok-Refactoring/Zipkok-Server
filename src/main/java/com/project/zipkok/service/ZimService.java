@@ -1,5 +1,6 @@
 package com.project.zipkok.service;
 
+import com.project.zipkok.common.exception.RealEstateException;
 import com.project.zipkok.common.exception.zim.NoUserOrRealEstate;
 import com.project.zipkok.common.exception.zim.ZimBadRequestException;
 import com.project.zipkok.dto.GetZimLoadResponse;
@@ -56,7 +57,8 @@ public class ZimService {
         log.info("{ZimService.zimRegister}");
 
         User user = this.userRepository.findByUserId(jwtUserDetail.getUserId());
-        RealEstate realEstate = this.realEstateRepository.findById(realEstateId);
+        RealEstate realEstate = this.realEstateRepository.findById(realEstateId)
+                .orElseThrow(() -> new RealEstateException(INVALID_PROPERTY_ID));
         List<Zim> zimList = this.zimRepository.findAllByUser(user);
 
         if(user == null || realEstate == null){

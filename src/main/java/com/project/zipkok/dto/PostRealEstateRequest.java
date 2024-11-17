@@ -2,24 +2,28 @@ package com.project.zipkok.dto;
 
 import com.project.zipkok.common.enums.RealEstateType;
 import com.project.zipkok.common.enums.TransactionType;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
+import com.project.zipkok.common.enums.ValidEnum;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class PostRealEstateRequest {
+
     @NotBlank
     @Size(max = 30)
     private String realEstateName;
+
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private TransactionType transactionType;
+    @ValidEnum(enumClass = TransactionType.class)
+    private String transactionType;
+
     @NotNull
-    @Enumerated(EnumType.STRING)
-    private RealEstateType realEstateType;
+    @ValidEnum(enumClass = RealEstateType.class)
+    private String realEstateType;
 
     private Long deposit;
 
@@ -27,13 +31,19 @@ public class PostRealEstateRequest {
 
     @NotNull
     private Integer administrativeFee;
+
     @NotBlank
     private String address;
+
     private String detailAddress;
+
     @NotNull
     private Double latitude;
+
     @NotNull
     private Double longitude;
+
     private Integer pyeongsu;
+
     private Integer floorNum;
 }

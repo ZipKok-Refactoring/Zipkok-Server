@@ -29,8 +29,7 @@ public class DesireResidence {
     @Column(name = "status", nullable = false)
     private String status = "active";
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(mappedBy = "desireResidence", orphanRemoval = true, cascade = CascadeType.ALL)
     private User user;
 
     public DesireResidence(User user) {
@@ -56,6 +55,4 @@ public class DesireResidence {
         this.longitude = longitude;
         this.status = "active";
     }
-
-
 }

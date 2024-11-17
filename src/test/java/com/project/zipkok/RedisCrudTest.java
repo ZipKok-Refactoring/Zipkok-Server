@@ -17,11 +17,12 @@ import static org.awaitility.Awaitility.await;
 
 @Slf4j
 @SpringBootTest
-@ActiveProfiles("local")
+@ActiveProfiles("test")
 public class RedisCrudTest {
     final String KEY = "key";
     final String VALUE = "value";
     final Duration DURATION = Duration.ofMillis(5000);
+
     @Autowired
     private RedisService redisService;
 

@@ -48,8 +48,7 @@ public class TransactionPriceConfig {
     @Column(name = "status", nullable = false)
     private String status = "active";
 
-    @OneToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @OneToOne(mappedBy = "transactionPriceConfig", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private User user;
 
     public TransactionPriceConfig(User user) {
