@@ -33,7 +33,7 @@ public class Star {
     @Column(name = "vibe_star", nullable = false)
     private int vibeStar;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "star", fetch = FetchType.LAZY)
 //    @JoinColumn(name = "kok_id", nullable = true)
     private Kok kok;
 
