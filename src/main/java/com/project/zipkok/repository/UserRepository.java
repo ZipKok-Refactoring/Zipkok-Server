@@ -22,7 +22,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
             + "LEFT JOIN FETCH u.koks k "
             + "WHERE u.userId = :userId"
     )
-    Optional<User> findByUserIdWithZimAndKok(Long userId);
+    Optional<User> findByUserIdWithZimAndKok(@Param("userId") Long userId);
 
     @Query("SELECT u "
             + "FROM User u "
