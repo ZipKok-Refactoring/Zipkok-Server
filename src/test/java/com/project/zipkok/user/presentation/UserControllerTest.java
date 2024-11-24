@@ -1,8 +1,9 @@
-package com.project.zipkok.controller;
+package com.project.zipkok.user.presentation;
 
 import com.google.gson.Gson;
 import com.project.zipkok.common.enums.Gender;
 import com.project.zipkok.common.enums.OAuthProvider;
+import com.project.zipkok.controller.UserController;
 import com.project.zipkok.dto.PostSignUpRequest;
 import com.project.zipkok.service.UserService;
 import com.project.zipkok.util.jwt.AuthTokens;
@@ -68,9 +69,9 @@ class UserControllerTest {
     private PostSignUpRequest signUpRequest() {
         return PostSignUpRequest.builder()
                 .nickname("test")
-                .oauthProvider(OAuthProvider.KAKAO)
+                .oauthProvider(OAuthProvider.KAKAO.toString())
                 .email("test@test.com")
-                .gender(Gender.MALE)
+                .gender(Gender.MALE.toString())
                 .birthday("001212")
                 .build();
     }

@@ -1,4 +1,4 @@
-package com.project.zipkok.fixture;
+package com.project.zipkok.user.fixture;
 
 import com.project.zipkok.model.Kok;
 import com.project.zipkok.model.Star;

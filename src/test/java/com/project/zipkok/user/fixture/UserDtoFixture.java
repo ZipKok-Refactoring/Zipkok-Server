@@ -1,4 +1,4 @@
-package com.project.zipkok.fixture;
+package com.project.zipkok.user.fixture;
 
 import com.project.zipkok.common.enums.Gender;
 import com.project.zipkok.common.enums.OAuthProvider;
@@ -12,9 +12,9 @@ public class UserDtoFixture {
     public static PostSignUpRequest createDefaultPostSignUpRequest() {
         return PostSignUpRequest.builder()
                 .nickname("test")
-                .oauthProvider(OAuthProvider.KAKAO)
+                .oauthProvider(OAuthProvider.KAKAO.toString())
                 .email("test@test.com")
-                .gender(Gender.MALE)
+                .gender(Gender.MALE.toString())
                 .birthday("001212")
                 .build();
     }

@@ -1,15 +1,16 @@
-package com.project.zipkok.service;
+package com.project.zipkok.user.application;
 
 import com.project.zipkok.common.service.RedisService;
 import com.project.zipkok.dto.*;
-import com.project.zipkok.fixture.AuthTokensFixture;
-import com.project.zipkok.fixture.JwtUserDetailsFixture;
-import com.project.zipkok.fixture.UserDtoFixture;
-import com.project.zipkok.fixture.UserFixture;
+import com.project.zipkok.user.fixture.AuthTokensFixture;
+import com.project.zipkok.user.fixture.JwtUserDetailsFixture;
+import com.project.zipkok.user.fixture.UserDtoFixture;
+import com.project.zipkok.user.fixture.UserFixture;
 import com.project.zipkok.model.Highlight;
 import com.project.zipkok.model.Option;
 import com.project.zipkok.model.User;
 import com.project.zipkok.repository.*;
+import com.project.zipkok.service.UserService;
 import com.project.zipkok.util.jwt.AuthTokens;
 import com.project.zipkok.util.jwt.JwtProvider;
 import com.project.zipkok.util.jwt.JwtUserDetails;
@@ -19,12 +20,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Duration;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -145,7 +143,7 @@ class UserServiceTest {
         then(userRepository).should().findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
     }
 
-    @DisplayName("유저 정보를 상세하게 조회할 수 있다.")
+    //@DisplayName("유저 정보를 상세하게 조회할 수 있다.")
     @Test
     void myPageDetailLoad() {
 

@@ -1,4 +1,4 @@
-package com.project.zipkok.fixture;
+package com.project.zipkok.user.fixture;
 
 import com.project.zipkok.common.enums.RealEstateType;
 import com.project.zipkok.common.enums.TransactionType;
@@ -9,13 +9,13 @@ public class RealEstateFixture {
     public static RealEstate createDefaultRealEstate(String address) {
         return RealEstate.builder()
                 .address(address)
-                .latitude(100)
-                .longitude(200)
+                .latitude(100.0)
+                .longitude(200.0)
                 .transactionType(TransactionType.MONTHLY)
-                .deposit(1000)
-                .price(10000)
+                .deposit(1000L)
+                .price(10000L)
                 .realEstateType(RealEstateType.APARTMENT)
-                .status("active")
+                //.status("active")
                 .build();
     }
 }

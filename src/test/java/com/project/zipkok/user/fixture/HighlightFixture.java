@@ -1,4 +1,4 @@
-package com.project.zipkok.fixture;
+package com.project.zipkok.user.fixture;
 
 import com.project.zipkok.model.Highlight;
 import com.project.zipkok.model.User;

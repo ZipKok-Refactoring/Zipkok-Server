@@ -1,17 +1,13 @@
-package com.project.zipkok.fixture;
+package com.project.zipkok.user.fixture;
 
 import com.project.zipkok.common.enums.Gender;
 import com.project.zipkok.common.enums.OAuthProvider;
 import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.model.DesireResidence;
-import com.project.zipkok.model.Highlight;
 import com.project.zipkok.model.TransactionPriceConfig;
 import com.project.zipkok.model.User;
 
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Set;
 
 public class UserFixture {
     public static User createDefaultUser() {
