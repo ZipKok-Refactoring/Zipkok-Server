@@ -5,7 +5,6 @@ import com.project.zipkok.model.Kok;
 import com.project.zipkok.model.Option;
 import com.project.zipkok.model.RealEstate;
 
-import static com.project.zipkok.kok.fixture.KokFixture.KOK_01;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -46,7 +45,7 @@ public class KokServiceResponseMatcher {
         assertEquals(realEstate.getDeposit(), response.getDeposit());
         assertEquals(realEstate.getPrice(), response.getPrice());
         assertEquals(realEstate.getDetail(), response.getDetail());
-        assertEquals(realEstate.getPyeongsu(), Integer.toUnsignedLong(response.getPyeongsu()));
+        assertEquals(realEstate.getPyeongsu(), response.getPyeongsu());
         assertEquals(realEstate.getAreaSize(), response.getAreaSize());
         assertEquals(realEstate.getFloorNum(), response.getFloorNum());
         assertEquals(realEstate.getAdministrativeFee(), response.getAdministrativeFee());
@@ -106,8 +105,8 @@ public class KokServiceResponseMatcher {
         assertEquals(response.getContractOptions().size(), 1);
     }
 
-    public static void expectedServicePostOrPutKokResponse(PostOrPutKokResponse response){
-        assertEquals(response.getKokId(), KOK_01.getKokId());
+    public static void expectedServicePostOrPutKokResponse(PostOrPutKokResponse response, Kok kok){
+        assertEquals(response.getKokId(), kok.getKokId());
     }
 
 }

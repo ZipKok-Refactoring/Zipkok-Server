@@ -2,6 +2,7 @@ package com.project.zipkok.kok.response;
 
 import com.project.zipkok.common.enums.*;
 import com.project.zipkok.model.*;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -93,32 +94,38 @@ public class MakeTestKokServiceResponse {
     private static RealEstate getRealEstate(Long reId, String imageurl, String address, String daddress, String agent, TransactionType transType, RealEstateType realType, Long deposit, int price){
         RealEstate dummyRealEstate = RealEstate.builder().build();
         RealEstateImage realEstateImage = new RealEstateImage(imageurl, dummyRealEstate);
-        return RealEstate.builder()
-                .realEstateId(reId)
-                .realEstateImages(List.of(realEstateImage))
+        RealEstate realEstate = RealEstate.builder()
                 .address(address)
                 .detailAddress(daddress)
                 .agent(agent)
                 .transactionType(transType)
                 .realEstateType(realType)
                 .deposit(deposit)
-                .price(price)
-                .status("active")
+                .price(Long.valueOf(price))
                 .build();
+
+        ReflectionTestUtils.setField(realEstate, "realEstateImage", List.of(realEstateImage));
+        ReflectionTestUtils.setField(realEstate, "realEstateId", reId);
+        ReflectionTestUtils.setField(realEstate, "status", "active");
+
+        return realEstate;
     }
 
     public static RealEstate getRealEstateWithoutImage(Long reId, String address, String daddress, String agent, TransactionType transType, RealEstateType realType, Long deposit, int price){
-        return RealEstate.builder()
-                .realEstateId(reId)
+        RealEstate realEstate =  RealEstate.builder()
                 .address(address)
                 .detailAddress(daddress)
                 .agent(agent)
                 .transactionType(transType)
                 .realEstateType(realType)
                 .deposit(deposit)
-                .price(price)
-                .status("active")
+                .price(Long.valueOf(price))
                 .build();
+
+        ReflectionTestUtils.setField(realEstate, "realEstateId", reId);
+        ReflectionTestUtils.setField(realEstate, "status", "active");
+
+        return realEstate;
     }
 
     public static User getUser(Long userId){

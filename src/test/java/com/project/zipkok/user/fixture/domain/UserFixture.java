@@ -6,7 +6,9 @@ import com.project.zipkok.common.enums.Role;
 import com.project.zipkok.model.DesireResidence;
 import com.project.zipkok.model.TransactionPriceConfig;
 import com.project.zipkok.model.User;
+import jdk.jshell.Snippet;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 
 public class UserFixture {
@@ -33,6 +35,10 @@ public class UserFixture {
                 .nickname(nickname)
                 .gender(Gender.MALE)
                 .birthday(birthday)
+                .role(Role.USER)
+                .koks(new HashSet<>())
+                .zims(new HashSet<>())
+                .status("active")
                 .build();
     }
 
