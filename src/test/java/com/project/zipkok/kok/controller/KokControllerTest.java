@@ -1,6 +1,5 @@
 package com.project.zipkok.kok.controller;
 
-import com.google.gson.Gson;
 import com.project.zipkok.config.SecurityConfig;
 import com.project.zipkok.controller.KokController;
 import com.project.zipkok.dto.*;
@@ -48,8 +47,6 @@ public class KokControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
-
-    Gson gson = new Gson();
 
 
     @DisplayName("콕 무한페이징 api 성공")
