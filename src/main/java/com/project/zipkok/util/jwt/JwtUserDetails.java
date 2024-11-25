@@ -10,11 +10,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Builder
 public class JwtUserDetails {
+    private final String email;
     private final Long userId;
     private final Role role;
 
     public static JwtUserDetails from(User user) {
         return JwtUserDetails.builder()
+                .email(user.getEmail())
                 .userId(user.getUserId())
                 .role(user.getRole())
                 .build();

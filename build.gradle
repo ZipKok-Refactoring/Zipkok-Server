@@ -37,6 +37,10 @@ dependencies {
 	//테스트코드 spring security
 	testImplementation 'org.springframework.security:spring-security-test'
 
+	//테스트코드 H2 DB
+	testImplementation group: 'com.h2database', name: 'h2', version: '2.1.214'
+
+
 
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.projectlombok:lombok:1.18.28'
@@ -63,8 +67,6 @@ dependencies {
 	//selenium
 	implementation 'org.seleniumhq.selenium:selenium-java:4.0.0'
 
-	//gson
-	implementation 'com.google.code.gson:gson:2.10.1'
 
 	//테스트용 인메모리 데이터베이스
 	testImplementation 'com.h2database:h2'
@@ -75,6 +77,11 @@ dependencies {
 
 	// Embedded-Redis
 	implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+
+	//Gson
+	implementation 'com.google.code.gson:gson:2.8.9'
+
+
 }
 
 tasks.named('test') {

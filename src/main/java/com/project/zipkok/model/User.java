@@ -105,8 +105,8 @@ public class User {
     }
 
     public void setOnBoardingInfo(PatchOnBoardingRequest patchOnBoardingRequest) {
-        this.realEstateType = patchOnBoardingRequest.getRealEstateType();
-        this.transactionType = patchOnBoardingRequest.getTransactionType();
+        this.realEstateType = RealEstateType.valueOf(patchOnBoardingRequest.getRealEstateType());
+        this.transactionType = TransactionType.valueOf(patchOnBoardingRequest.getTransactionType());
 
         this.desireResidence.setDesireResidenceInfo(patchOnBoardingRequest);
         this.transactionPriceConfig.setTransactionPriceConfig(patchOnBoardingRequest);

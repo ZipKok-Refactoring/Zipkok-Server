@@ -10,6 +10,8 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class DesireResidence {
 
     @Id

@@ -13,6 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class PatchOnBoardingRequest {
 
     @NotBlank
@@ -25,11 +26,13 @@ public class PatchOnBoardingRequest {
     @NotNull
     private Double longitude;
 
+    @NotNull
     @ValidEnum(enumClass = RealEstateType.class)
-    private RealEstateType realEstateType;
+    private String realEstateType;
 
-    @Enumerated(EnumType.STRING)
-    private TransactionType transactionType;
+    @NotNull
+    @ValidEnum(enumClass = TransactionType.class)
+    private String transactionType;
 
     @NotNull
     @PositiveOrZero

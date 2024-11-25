@@ -17,7 +17,6 @@ import org.springframework.data.domain.Slice;
 import java.util.List;
 import java.util.Set;
 
-import static com.project.zipkok.kok.fixture.UserFixture.DUMMY_ZIM;
 import static com.project.zipkok.kok.repository.KokRespositoryResponseMatcher.*;
 import static com.project.zipkok.kok.response.MakeTestKokServiceResponse.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;

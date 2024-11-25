@@ -8,12 +8,16 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import jakarta.transaction.Transaction;
+import lombok.*;
 
 @Entity
 @Table(name = "TransactionPriceConfig")
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class TransactionPriceConfig {
 
     @Id
@@ -50,6 +54,7 @@ public class TransactionPriceConfig {
 
     @OneToOne(mappedBy = "transactionPriceConfig", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private User user;
+
 
     public TransactionPriceConfig(User user) {
         this.user = user;
