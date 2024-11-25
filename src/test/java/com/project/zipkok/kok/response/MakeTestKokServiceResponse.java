@@ -104,14 +104,14 @@ public class MakeTestKokServiceResponse {
                 .price(Long.valueOf(price))
                 .build();
 
-        ReflectionTestUtils.setField(realEstate, "realEstateImage", List.of(realEstateImage));
+        ReflectionTestUtils.setField(realEstate, "realEstateImages", List.of(realEstateImage));
         ReflectionTestUtils.setField(realEstate, "realEstateId", reId);
         ReflectionTestUtils.setField(realEstate, "status", "active");
 
         return realEstate;
     }
 
-    public static RealEstate getRealEstateWithoutImage(Long reId, String address, String daddress, String agent, TransactionType transType, RealEstateType realType, Long deposit, int price){
+    public static RealEstate getRealEstateWithoutImage(Long reId, String address, String daddress, String agent, TransactionType transType, RealEstateType realType, Long deposit, int price, double latitude, double longitude){
         RealEstate realEstate =  RealEstate.builder()
                 .address(address)
                 .detailAddress(daddress)
@@ -120,6 +120,8 @@ public class MakeTestKokServiceResponse {
                 .realEstateType(realType)
                 .deposit(deposit)
                 .price(Long.valueOf(price))
+                .latitude(latitude)
+                .longitude(longitude)
                 .build();
 
         ReflectionTestUtils.setField(realEstate, "realEstateId", reId);

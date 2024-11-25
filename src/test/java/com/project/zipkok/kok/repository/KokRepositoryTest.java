@@ -50,7 +50,7 @@ public class KokRepositoryTest {
     void 콕_존재_여부() throws Exception {
         //given
         User user = getUser(1L);
-        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10);
+        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,1.1,1.1);
         Kok kok = MakeTestKokRepositoryResponse.makeTestKok(user, realEstate);
         userRepository.save(user);
         realEstateRepository.save(realEstate);
@@ -68,7 +68,7 @@ public class KokRepositoryTest {
     void 콕_아이디로_콕_불러오기() throws Exception {
         //given
         User user = getUser(1L);
-        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10);
+        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 101,1.1,1.1);
         Kok kok = MakeTestKokRepositoryResponse.makeTestKok(user, realEstate);
         userRepository.save(user);
         realEstateRepository.save(realEstate);
@@ -86,7 +86,7 @@ public class KokRepositoryTest {
     void 유저_아이디로_콕_무한페이징_불러오기() throws Exception {
         //given
         User user = getUser(1L);
-        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10);
+        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 101,1.1,1.1);
         Kok kok = MakeTestKokRepositoryResponse.makeTestKok(user, realEstate);
         Pageable pageable = PageRequest.of(0, 10);
         userRepository.save(user);
@@ -105,7 +105,7 @@ public class KokRepositoryTest {
     void 유저_아이디로_콕_무한페이징_불러오기_찜_포함() throws Exception {
         //given
         User user = getUser(1L);
-        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10);
+        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,1.1,1.1);
         Kok kok = MakeTestKokRepositoryResponse.makeTestKok(user, realEstate);
         Zim zim = MakeTestKokRepositoryResponse.makeTestZim(realEstate,user);
         Pageable pageable = PageRequest.of(0, 10);
@@ -126,7 +126,7 @@ public class KokRepositoryTest {
     void 콕_아이디로_옵션과_세부옵션과_함께_콕_반환() throws Exception {
         //given
         User user = getUser(1L);
-        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10);
+        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,1.1,1.1);
         Kok kok = MakeTestKokRepositoryResponse.makeTestKok(user, realEstate);
         Option option = MakeTestKokRepositoryResponse.makeTestOption(user);
         CheckedOption checkedOption =MakeTestKokRepositoryResponse.makeTestCheckedOption(kok, option);
@@ -155,7 +155,7 @@ public class KokRepositoryTest {
     void 콕_아이디로_느낀점과_별점과_함께_콕_반환() throws Exception {
         //given
         User user = getUser(1L);
-        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10);
+        RealEstate realEstate = getRealEstateWithoutImage(1L, "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,1.1,1.1);
         Kok kok = MakeTestKokRepositoryResponse.makeTestKok(user, realEstate);
         Impression impression = MakeTestKokRepositoryResponse.makeTestImpression();
         CheckedImpression checkedImpression = MakeTestKokRepositoryResponse.makeTestCheckedImpression(kok, impression);
