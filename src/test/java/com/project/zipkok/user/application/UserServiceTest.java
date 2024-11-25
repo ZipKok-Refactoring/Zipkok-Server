@@ -2,10 +2,10 @@ package com.project.zipkok.user.application;
 
 import com.project.zipkok.common.service.RedisService;
 import com.project.zipkok.dto.*;
-import com.project.zipkok.user.fixture.AuthTokensFixture;
-import com.project.zipkok.user.fixture.JwtUserDetailsFixture;
-import com.project.zipkok.user.fixture.UserDtoFixture;
-import com.project.zipkok.user.fixture.UserFixture;
+import com.project.zipkok.user.fixture.dto.AuthTokensFixture;
+import com.project.zipkok.user.fixture.dto.JwtUserDetailsFixture;
+import com.project.zipkok.user.fixture.dto.UserDtoFixture;
+import com.project.zipkok.user.fixture.domain.UserFixture;
 import com.project.zipkok.model.Highlight;
 import com.project.zipkok.model.Option;
 import com.project.zipkok.model.User;
@@ -75,7 +75,7 @@ class UserServiceTest {
     @Mock
     private JwtUserDetails jwtUserDetails;
 
-    @DisplayName("회원가입에 성공하면 토큰을 생성하여 반환한다.")
+    @DisplayName("회원가입에_성공하면_토큰을_생성하여_반환한다.")
     @Test
     void signUp() {
         //given
@@ -100,7 +100,7 @@ class UserServiceTest {
 
     }
 
-    @DisplayName("유저의 온보딩 정보를 수정할 수 있다.")
+    @DisplayName("유저의_온보딩_정보를_수정할_수_있다.")
     @Test
     void setOnBoarding() {
 
@@ -124,7 +124,7 @@ class UserServiceTest {
 
     }
 
-    @DisplayName("유저 정보를 조회할 수 있다.")
+    @DisplayName("유저_정보를_조회할_수_있다.")
     @Test
     void myPageLoad() {
 
@@ -143,7 +143,7 @@ class UserServiceTest {
         then(userRepository).should().findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
     }
 
-    //@DisplayName("유저 정보를 상세하게 조회할 수 있다.")
+    @DisplayName("유저_정보를_상세하게_조회할_수_있다.")
     @Test
     void myPageDetailLoad() {
 
@@ -161,10 +161,9 @@ class UserServiceTest {
         then(userRepository).should().findByUserIdWithDesireResidenceAndTransactionPriceConfig(jwtUserDetails.getUserId());
     }
 
-    @DisplayName("마이페이지 리스트 항목 수정 페이지 로드할 수 있다.")
+    @DisplayName("마이페이지_리스트_항목_수정_페이지_로드할_수_있다.")
     @Test
     void loadKokOption() {
-        //이렇게 테스트하는게 맞는지 모르겠다!
 
         //given
         JwtUserDetails jwtUserDetails = JwtUserDetailsFixture.createDefaultJwtUserDetails();
@@ -187,7 +186,7 @@ class UserServiceTest {
     }
 
 
-    @DisplayName("마이페이지 리스트 항목 수정할 수 있다.")
+    @DisplayName("마이페이지_리스트_항목_수정할_수_있다.")
     @Test
     void updateKokOption() {
 
