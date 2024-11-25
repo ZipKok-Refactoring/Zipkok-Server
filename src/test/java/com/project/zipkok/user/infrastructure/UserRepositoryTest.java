@@ -2,7 +2,7 @@ package com.project.zipkok.user.infrastructure;
 
 import com.project.zipkok.model.*;
 import com.project.zipkok.repository.*;
-import com.project.zipkok.user.fixture.*;
+import com.project.zipkok.user.fixture.domain.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +36,7 @@ public class UserRepositoryTest {
     @Autowired
     StarRepository starRepository;
 
-    @DisplayName("이메일을 통해 user 조회하기")
+    @DisplayName("이메일을_통해_user_조회하기")
     @Test
     void findByEmail() {
 
@@ -51,7 +51,7 @@ public class UserRepositoryTest {
         assertEquals(expectUser, foundUser);
     }
 
-    @DisplayName("user 를 조회할 때 zim 과 kok 을 조인하여 같이 조회하기")
+    @DisplayName("user_를_조회할_때_zim_과_kok_을_조인하여_같이_조회하기")
     @Test
     void findByUserIdWithZimAndKok() {
         //given
@@ -102,7 +102,7 @@ public class UserRepositoryTest {
 
     }
 
-    @DisplayName("user 를 조회할 때 desire residence 과 transaction price config 을 조인하여 같이 조회하기")
+    @DisplayName("user_를_조회할_때_desire_residence_과_transaction_price_config_을_조인하여_같이_조회하기")
     @Test
     void findByUserIdWithDesireResidenceAndTransactionPriceConfig() {
 
