@@ -3,19 +3,19 @@ package com.project.zipkok.dto;
 import com.project.zipkok.common.enums.OptionCategory;
 import com.project.zipkok.model.*;
 import lombok.Builder;
+import lombok.Data;
 import lombok.Getter;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Getter
 @Builder
 public class GetKokOuterInfoResponse {
-    private List<String> hilights;
+    private List<String> highlights;
     private List<OuterOption> options;
 
-    @Getter
+    @Data
     @Builder
     public static class OuterOption {
         private String option;
@@ -41,7 +41,7 @@ public class GetKokOuterInfoResponse {
     public static GetKokOuterInfoResponse of(Kok kok) {
 
         return GetKokOuterInfoResponse.builder()
-                .hilights(kok.getCheckedHighlights()
+                .highlights(kok.getCheckedHighlights()
                         .stream()
                         .map(CheckedHighlight::getHighlight)
                         .map(Highlight::getTitle)

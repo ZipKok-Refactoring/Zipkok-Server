@@ -100,6 +100,9 @@ public class KokService {
         User user = userRepository.findByUserId(jwtUserDetail.getUserId());
         Kok kok = kokRepository.findKokWithCheckedOptionAndCheckedDetailOption(kokId);
 
+        log.info(String.valueOf(kok.getKokId()));
+        log.info(kok.getRealEstate().getRealEstateId().toString());
+
         validateUserAndKok(user, kok);
 
         return GetKokContractResponse.of(kok);
@@ -162,8 +165,8 @@ public class KokService {
 
 
         GetKokConfigInfoResponse response = GetKokConfigInfoResponse.builder()
-                .hilights(hilightsResponse.stream().toList())
-                .checkedHilights(checkedHilightsResponse.stream().toList())
+                .highlights(hilightsResponse.stream().toList())
+                .checkedHighlights(checkedHilightsResponse.stream().toList())
                 .furnitureOptions(furnitureOptionsResponse.stream().toList())
                 .checkedFurnitureOptions(checkedFurinirureOptionsResponse.stream().toList())
                 .reviewInfo(reviewInfoResponse)

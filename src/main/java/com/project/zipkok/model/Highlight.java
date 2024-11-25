@@ -35,6 +35,11 @@ public class Highlight {
     @OneToMany(mappedBy = "highlight", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<CheckedHighlight> checkedHighlights = new ArrayList<>();
 
+    public Highlight(User user, String title) {
+        this.user = user;
+        this.title = title;
+    }
+
     @Builder
     public static Highlight of(String title, User user){
         return Highlight.builder()

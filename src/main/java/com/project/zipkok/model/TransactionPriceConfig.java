@@ -3,6 +3,7 @@ package com.project.zipkok.model;
 import com.project.zipkok.dto.PatchOnBoardingRequest;
 import com.project.zipkok.dto.PutUpdateMyInfoRequest;
 import jakarta.persistence.*;
+import jakarta.transaction.Transaction;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

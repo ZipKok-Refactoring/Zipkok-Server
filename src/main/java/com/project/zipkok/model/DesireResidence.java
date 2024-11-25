@@ -55,5 +55,4 @@ public class DesireResidence {
         this.longitude = longitude;
         this.status = "active";
     }
-
 }

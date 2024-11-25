@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class PostOrPutKokRequest {
 
     @Positive
@@ -34,6 +35,7 @@ public class PostOrPutKokRequest {
     private ReviewInfo reviewInfo;
 
     @Getter
+    @Builder
     public static class ReviewInfo {
 
         @NotNull
@@ -73,6 +75,7 @@ public class PostOrPutKokRequest {
     private List<Option> checkedContractOptions = new ArrayList<>();
 
     @Getter
+    @Builder
     public static class Option {
 
         @NotNull
