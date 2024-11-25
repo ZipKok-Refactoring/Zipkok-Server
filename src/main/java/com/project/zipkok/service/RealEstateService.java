@@ -36,91 +36,50 @@ public class RealEstateService {
 
         log.info("[RealEstateService.getRealEstateInfo]");
 
-//        try {
-            RealEstate realEstate = realEstateRepository.findById(realEstateId.longValue());
-            User user = userRepository.findByUserId(jwtUserDetail.getUserId());
+        RealEstate realEstate = realEstateRepository.findById(realEstateId.longValue())
+                .orElseThrow(() -> new RealEstateException(INVALID_PROPERTY_ID));
+
+        User user = userRepository.findByUserIdWithZimAndKok(jwtUserDetail.getUserId())
+                .orElseThrow(() -> new NoMatchUserException(MEMBER_NOT_FOUND));
+
+        List<String> realEstateImages = getAllImageUrlsFromRealEstate(realEstate);
+
+        List<GetRealEstateResponse.RealEstateBriefInfo> neighborRealEstates = findNearbyRealEstates(realEstate.getLatitude(), realEstate.getLongitude(), 5)
+                .stream()
+                .map(GetRealEstateResponse.RealEstateBriefInfo::from)
+                .toList();
 
 
-            List<String> realEstateImages = new ArrayList<>();
+        return GetRealEstateResponse.of(realEstate,
+                user.getZims().stream().map(Zim::getRealEstate).collect(Collectors.toSet()).contains(realEstate),
+                user.getKoks().stream().map(Kok::getRealEstate).collect(Collectors.toSet()).contains(realEstate),
+                GetRealEstateResponse.ImageInfo.from(realEstateImages),
+                neighborRealEstates);
+    }
 
-            realEstateImages.add(realEstate.getImageUrl());
+    private static List<String> getAllImageUrlsFromRealEstate(RealEstate realEstate) {
+        List<String> realEstateImages = new ArrayList<>();
 
-            realEstate.getRealEstateImages()
-                    .stream()
-                    .map(RealEstateImage::getImageUrl)
-                    .forEach(realEstateImages::add);
+        // 대표 이미지
+        realEstateImages.add(realEstate.getImageUrl());
 
-            List<GetRealEstateResponse.RealEstateBriefInfo> neighborRealEstates = findNearbyRealEstates(realEstate.getLatitude(), realEstate.getLongitude(), 5)
-                    .stream()
-                    .map(result -> GetRealEstateResponse.RealEstateBriefInfo.builder()
-                            .realEstateId(result.getRealEstateId())
-                            .imageUrl(result.getImageUrl())
-                            .address(result.getAddress())
-                            .deposit(result.getDeposit())
-                            .price(result.getPrice())
-                            .build())
-                    .toList();
+        // 부가 이미지
+        realEstate.getRealEstateImages()
+                .stream()
+                .map(RealEstateImage::getImageUrl)
+                .forEach(realEstateImages::add);
 
-
-            GetRealEstateResponse response = GetRealEstateResponse.builder()
-                    .realEstateId(realEstate.getRealEstateId())
-                    .imageInfo(new GetRealEstateResponse.ImageInfo(realEstateImages.size(), realEstateImages))
-                    .address(realEstate.getAddress())
-                    .detailAddress(realEstate.getDetailAddress())
-                    .transactionType(realEstate.getTransactionType().toString())
-                    .deposit(realEstate.getDeposit())
-                    .price(realEstate.getPrice())
-                    .detail(realEstate.getDetail())
-                    .areaSize(realEstate.getAreaSize())
-                    .pyeongsu(realEstate.getPyeongsu())
-                    .realEstateType(realEstate.getRealEstateType().toString())
-                    .floorNum(realEstate.getFloorNum())
-                    .administrativeFee(realEstate.getAdministrativeFee())
-                    .latitude(realEstate.getLatitude())
-                    .longitude(realEstate.getLongitude())
-                    .isZimmed(user.getZims().stream().map(Zim::getRealEstate).collect(Collectors.toSet()).contains(realEstate))
-                    .isKokked(user.getKoks().stream().map(Kok::getRealEstate).collect(Collectors.toSet()).contains(realEstate))
-                    .neighborRealEstates(neighborRealEstates)
-                    .build();
-
-            return response;
-//        } catch (Exception e) {
-//            log.error(e.getMessage());
-//            throw new RealEstateException(INVALID_PROPERTY_ID);
-//        }
+        return realEstateImages;
     }
 
     public PostRealEstateResponse registerRealEstate(JwtUserDetails jwtUserDetail, PostRealEstateRequest postRealEstateRequest) {
 
-//        try {
-            User user = userRepository.findByUserId(jwtUserDetail.getUserId());
-
-            RealEstate realEstate = RealEstate.builder()
-                    .imageUrl(null)
-                    .address(postRealEstateRequest.getAddress())
-                    .latitude(postRealEstateRequest.getLatitude())
-                    .longitude(postRealEstateRequest.getLongitude())
-                    .transactionType(postRealEstateRequest.getTransactionType())
-                    .deposit(postRealEstateRequest.getDeposit())
-                    .price(postRealEstateRequest.getPrice())
-                    .administrativeFee(postRealEstateRequest.getAdministrativeFee())
-                    .detail(postRealEstateRequest.getRealEstateName())
-                    .areaSize(null)
-                    .pyeongsu(postRealEstateRequest.getPyeongsu())
-                    .realEstateType(postRealEstateRequest.getRealEstateType())
-                    .floorNum(postRealEstateRequest.getFloorNum())
-                    .userId(jwtUserDetail.getUserId())
-                    .agent(null)
-                    .detailAddress(postRealEstateRequest.getDetailAddress())
-                    .status("active")
-                    .build();
+            RealEstate realEstate = RealEstate.from(jwtUserDetail.getUserId(), postRealEstateRequest);
 
             Long realEstateId = realEstateRepository.save(realEstate).getRealEstateId();
 
             return new PostRealEstateResponse(realEstateId);
-//        } catch (Exception e) {
-//            throw new RealEstateException(PROPERTY_REGISTRATION_FAILURE);
-//        }
+
     }
 
     public GetMapRealEstateResponse getRealEstate(JwtUserDetails jwtUserDetail, GetRealEstateOnMapRequest getRealEstateOnMapRequest) {
@@ -153,11 +112,13 @@ public class RealEstateService {
             );
 
             if(userTransactionType != null && userRealEstateType != null){
+                
                 realEstateList = realEstateList
                                     .stream()
                                     .filter(result -> result.getTransactionType().equals(userTransactionType) && result.getRealEstateType().equals(userRealEstateType))
                                     .filter(result -> filterPriceConfig(result, getTempRealEstateResponse.getFilter(), false))
                                     .toList();
+
             }
 
 
@@ -272,13 +233,18 @@ public class RealEstateService {
         else{
             GetTempRealEstateResponse.Filter loginFilter = (GetTempRealEstateResponse.Filter) filter;
 
+            long depositMin = loginFilter.getDepositMin() != null ? loginFilter.getDepositMin() : 0L;
+            long depositMax = loginFilter.getDepositMax() != null ? loginFilter.getDepositMax() : Long.MAX_VALUE;
+            long priceMin = loginFilter.getPriceMin() != null ? loginFilter.getPriceMin() : 0L;
+            long priceMax = loginFilter.getPriceMax() != null ? loginFilter.getPriceMax() : Long.MAX_VALUE;
+
             if(transactionType.equals("월세")){
-                if(deposit < loginFilter.getDepositMin() || deposit > loginFilter.getDepositMax()){ return false; }
-                if(price < loginFilter.getPriceMin() || price > loginFilter.getPriceMax()) { return false; }
+                if(deposit < depositMin || deposit > depositMax){ return false; }
+                if(price < priceMin || price > priceMax) { return false; }
             }else if(transactionType.equals("전세")) {
-                if(deposit < loginFilter.getDepositMin() || deposit > loginFilter.getDepositMax()){ return false; }
+                if(deposit < depositMin || deposit > depositMax){ return false; }
             }else if(transactionType.equals("매매")){
-                if(price < loginFilter.getPriceMin() || price > loginFilter.getPriceMax()) { return false; }
+                if(price < priceMin || price > priceMax) { return false; }
             }
 
         }
@@ -287,7 +253,7 @@ public class RealEstateService {
         return true;
     }
 
-    public List<RealEstate> findNearbyRealEstates(double centerLat, double centerLon, int minResults) {
+    private List<RealEstate> findNearbyRealEstates(double centerLat, double centerLon, int minResults) {
         double radiusInKm = 0.5;
         List<RealEstate> nearbyRealEstates;
 

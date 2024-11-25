@@ -32,10 +32,11 @@ public class JwtProvider {
         log.info("JWT key={}", JWT_SECRET_KEY);
 
         Claims claims = Jwts.claims()
-                .setSubject(jwtUserDetails.getUserId().toString())
+                .setSubject(jwtUserDetails.getEmail())
                 .setIssuer("zipkok");
 
         claims.put("role", jwtUserDetails.getRole().toString());
+        claims.put("id", jwtUserDetails.getUserId().toString());
 
         Date now = new Date();
         Date accessTokenExpiredAt = new Date(now.getTime() + JWT_EXPIRED_IN);
@@ -69,7 +70,7 @@ public class JwtProvider {
 
         } catch (ExpiredJwtException e) {
             log.error("[ExpiredJwtException]");
-            throw new JwtInvalidTokenException(EXPIRED_TOKEN);
+            return true;
         } catch (UnsupportedJwtException e) {
             log.error("[UnsupportedJwtException]");
             throw new JwtUnsupportedTokenException(UNSUPPORTED_TOKEN_TYPE);
@@ -98,7 +99,7 @@ public class JwtProvider {
                 .setSigningKey(JWT_SECRET_KEY).build()
                 .parseClaimsJws(token)
                 .getBody()
-                .getSubject());
+                .getId());
     }
 
     private Claims getBody(String token) {
@@ -115,10 +116,17 @@ public class JwtProvider {
 
     public JwtUserDetails getJwtUserDetails(String token) {
         Claims claims = getBody(token);
+//        return JwtUserDetails.builder()
+//                .userId(Long.valueOf(claims.getSubject()))
+//                .role(Role.valueOf(claims.get("role").toString()))
+//                .build();
+
         return JwtUserDetails.builder()
-                .userId(Long.valueOf(claims.getSubject()))
+                .email(String.valueOf(claims.getSubject()))
+                .userId(Long.valueOf(claims.get("id").toString()))
                 .role(Role.valueOf(claims.get("role").toString()))
                 .build();
+
     }
 
 }

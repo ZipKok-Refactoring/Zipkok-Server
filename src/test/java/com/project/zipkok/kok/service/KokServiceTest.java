@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.project.zipkok.common.enums.Role.GUEST;
-import static com.project.zipkok.kok.fixture.UserFixture.DUMMY_USER;
 import static com.project.zipkok.kok.response.MakeTestKokControllerResponse.makePostOrPutKokRequest;
+import static com.project.zipkok.kok.response.MakeTestKokServiceResponse.getUser;
 import static com.project.zipkok.kok.response.MakeTestKokServiceResponse.makeTestKok;
 import static com.project.zipkok.kok.service.KokServiceResponseMatcher.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,7 +53,7 @@ public class KokServiceTest {
     @InjectMocks
     private KokService kokService;
 
-    private JwtUserDetails userDetails = new JwtUserDetails(DUMMY_USER.getUserId(), GUEST);
+    private JwtUserDetails userDetails = new JwtUserDetails("test", 1L, GUEST);
 
     @DisplayName("콕 무한페이징 service 성공")
     @Test
@@ -67,10 +67,11 @@ public class KokServiceTest {
                 "testDetailOption", true,
                 "테스트입니다"
         );
+        User user = getUser(1L);
         GetKokWithZimStatus getKokWithZimStatus = new GetKokWithZimStatus(kok, true);
         Pageable pageable = PageRequest.of(0, 10);
 
-        given(kokRepository.getKokWithZimStatus(eq(DUMMY_USER.getUserId()), eq(pageable))).willReturn(List.of(getKokWithZimStatus));
+        given(kokRepository.getKokWithZimStatus(eq(user.getUserId()), eq(pageable))).willReturn(List.of(getKokWithZimStatus));
 
         //when
         GetKokResponse response = kokService.getKoks(userDetails, pageable);
@@ -222,7 +223,7 @@ public class KokServiceTest {
     @Test
     void 콕_생성(){
         //given
-        givenForCreateOrUpdateKok();
+        Kok kok = givenForCreateOrUpdateKok();
         PostOrPutKokRequest request = makePostOrPutKokRequest();
         given(fileUploadUtils.deleteFile(any())).willReturn(null);
 
@@ -230,11 +231,11 @@ public class KokServiceTest {
         PostOrPutKokResponse response = kokService.createOrUpdateKok(userDetails, null, request);
 
         //then
-        expectedServicePostOrPutKokResponse(response);
+        expectedServicePostOrPutKokResponse(response, kok);
     }
 
 
-    private void givenForCreateOrUpdateKok(){
+    private Kok givenForCreateOrUpdateKok(){
         Kok kok =makeTestKok(
                 1L, "test/test", "test","test","test", TransactionType.MONTHLY, RealEstateType.APARTMENT, 1000L, 10,
                 1L, "http://test/test",
@@ -252,5 +253,7 @@ public class KokServiceTest {
         given(furnitureOptionRepository.findAll()).willReturn(kok.getCheckedFurnitures().stream().map(CheckedFurniture::getFurnitureOption).toList());
         given(optionRepository.findAll()).willReturn(kok.getCheckedOptions().stream().map(CheckedOption::getOption).toList());
         given(detailOptionRepository.findAll()).willReturn(kok.getCheckedDetailOptions().stream().map(CheckedDetailOption::getDetailOption).toList());
+
+        return kok;
     }
 }

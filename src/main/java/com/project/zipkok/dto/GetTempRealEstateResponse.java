@@ -20,6 +20,7 @@ public class GetTempRealEstateResponse implements GetMapRealEstateResponse {
 
     @Getter
     @SuperBuilder
+    @Setter
     public static class Filter extends GetMapRealEstateResponse.Filter {
 
         private Long depositMin;

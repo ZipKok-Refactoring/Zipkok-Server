@@ -71,13 +71,8 @@ public class UserService {
         log.info("{UserService.createUser}");
 
         User user = postSignUpRequest.toEntity();
+
         userRepository.save(user);
-
-        DesireResidence desireResidence = new DesireResidence(user);
-        TransactionPriceConfig transactionPriceConfig = new TransactionPriceConfig(user);
-
-        desireResidenceRepository.save(desireResidence);
-        transactionPriceConfigRepository.save(transactionPriceConfig);
 
         makeDefaultUserInfo(user);
 

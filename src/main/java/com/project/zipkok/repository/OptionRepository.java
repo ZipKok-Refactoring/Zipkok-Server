@@ -4,9 +4,11 @@ import com.project.zipkok.model.Option;
 import com.project.zipkok.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface OptionRepository extends JpaRepository<Option, Long> {
@@ -17,5 +19,5 @@ public interface OptionRepository extends JpaRepository<Option, Long> {
     List<Option> findAllByUserIdWithDetailOption(Long userId);
 
     @Query("SELECT o FROM Option o WHERE o.user.userId = :userId")
-    List<Option> findAllByUserId(Long userId);
+    List<Option> findAllByUserId(@Param("userId") Long userId);
 }

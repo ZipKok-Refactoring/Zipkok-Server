@@ -41,8 +41,11 @@ public class AuthenticationUtil {
         UserAuthentication authentication = null;
 
         if(isTokenValid(token)) {
+            String role = jwtProvider.getJwtUserDetails(token).getRole().toString();
+            log.info("[AuthenticationUtil.makeAuthentication : {} 권한 부여]", role);
             authentication =  UserAuthentication.from(jwtProvider.getJwtUserDetails(token));
         } else if (isRequestAvailableToGuest(request)) {
+            log.info("[AuthenticationUtil.makeAuthentication : Guest 권한 부여]");
             authentication = UserAuthentication.makeGuestAuthentication();
         }
 
