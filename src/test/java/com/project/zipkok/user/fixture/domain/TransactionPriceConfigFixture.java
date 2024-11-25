@@ -1,4 +1,4 @@
-package com.project.zipkok.user.fixture;
+package com.project.zipkok.user.fixture.domain;
 
 import com.project.zipkok.model.TransactionPriceConfig;
 import com.project.zipkok.model.User;

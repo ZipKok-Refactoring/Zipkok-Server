@@ -1,4 +1,4 @@
-package com.project.zipkok.user.fixture;
+package com.project.zipkok.user.fixture.domain;
 
 import com.project.zipkok.model.Kok;
 import com.project.zipkok.model.Star;

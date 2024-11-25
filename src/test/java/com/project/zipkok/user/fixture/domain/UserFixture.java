@@ -1,4 +1,4 @@
-package com.project.zipkok.user.fixture;
+package com.project.zipkok.user.fixture.domain;
 
 import com.project.zipkok.common.enums.Gender;
 import com.project.zipkok.common.enums.OAuthProvider;
@@ -11,17 +11,19 @@ import java.util.LinkedHashSet;
 
 public class UserFixture {
     public static User createDefaultUser() {
-        return User.builder()
-                .email("test@example.com")
-                .oAuthProvider(OAuthProvider.KAKAO)
-                .nickname("TestUser")
-                .gender(Gender.MALE)
-                .birthday("19970609")
-                .status("active")
-                .role(Role.USER)
-                .zims(new LinkedHashSet<>())
-                .koks(new LinkedHashSet<>())
-                .build();
+//        return User.builder()
+//                .email("test@example.com")
+//                .oAuthProvider(OAuthProvider.KAKAO)
+//                .nickname("TestUser")
+//                .gender(Gender.MALE)
+//                .birthday("19970609")
+//                .status("active")
+//                .role(Role.USER)
+//                .zims(new LinkedHashSet<>())
+//                .koks(new LinkedHashSet<>())
+//                .build();
+
+        return createCustomUser("test@example.com","TestUser", "19970609");
     }
 
     public static User createCustomUser(String email, String nickname, String birthday) {

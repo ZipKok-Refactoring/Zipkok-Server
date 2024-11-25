@@ -1,4 +1,4 @@
-package com.project.zipkok.user.fixture;
+package com.project.zipkok.user.fixture.dto;
 
 import com.project.zipkok.util.jwt.AuthTokens;
 
